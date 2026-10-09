@@ -1,0 +1,303 @@
+name: Insurance Campaign Microservices CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: read
+
+env:
+  SONAR_PROJECT_KEY: insurance-campaign-microservices
+  SONAR_PROJECT_NAME: Insurance Campaign Microservices
+
+jobs:
+  verify:
+    name: Maven Verify - Java 25
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Run tests and generate JaCoCo reports
+        run: mvn -B clean verify
+
+      - name: Check JaCoCo reports
+        if: always()
+        run: |
+          echo "Searching for JaCoCo XML reports..."
+          find . \( \
+            -path "*/target/site/jacoco/jacoco.xml" -o \
+            -path "*/target/site/jacoco-it/jacoco.xml" -o \
+            -path "*/target/site/jacoco-aggregate/jacoco.xml" \
+          \) -print
+
+  sonar:
+    name: SonarQube Analysis
+    runs-on: ubuntu-latest
+    needs: verify
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Clean previous SonarQube container
+        run: docker compose -f docker-compose-local.yml down -v || true
+
+      - name: Start SonarQube
+        run: docker compose -f docker-compose-local.yml up -d sonarqube
+
+      - name: Wait for SonarQube
+        run: |
+          echo "Waiting for SonarQube to be ready..."
+
+          for i in {1..60}; do
+            STATUS=$(curl -s http://localhost:9000/api/system/status | grep -o '"status":"[^"]*"' || true)
+
+            echo "SonarQube status: $STATUS"
+
+            if echo "$STATUS" | grep -q '"status":"UP"'; then
+              echo "SonarQube is ready."
+              exit 0
+            fi
+
+            sleep 10
+          done
+
+          echo "SonarQube did not become ready in time."
+          docker compose -f docker-compose-local.yml logs sonarqube || true
+          exit 1
+
+      - name: Change SonarQube default admin password
+        run: |
+          NEW_PASSWORD="Admin123456789!"
+
+          echo "::add-mask::$NEW_PASSWORD"
+
+          HTTP_STATUS=$(curl -s -o /tmp/sonar-password-response.json -w "%{http_code}" \
+            -u admin:admin \
+            -X POST "http://localhost:9000/api/users/change_password" \
+            -d "login=admin" \
+            -d "previousPassword=admin" \
+            -d "password=$NEW_PASSWORD")
+
+          if [ "$HTTP_STATUS" != "200" ] && [ "$HTTP_STATUS" != "204" ]; then
+            echo "Could not change SonarQube default admin password."
+            cat /tmp/sonar-password-response.json
+            exit 1
+          fi
+
+          echo "SONAR_ADMIN_PASSWORD=$NEW_PASSWORD" >> "$GITHUB_ENV"
+
+      - name: Generate SonarQube token
+        id: sonar-token
+        run: |
+          TOKEN_NAME="github-actions-token-${{ github.run_id }}-${{ github.run_attempt }}"
+
+          TOKEN=$(curl -s -u "admin:${SONAR_ADMIN_PASSWORD}" \
+            -X POST "http://localhost:9000/api/user_tokens/generate?name=${TOKEN_NAME}" \
+            | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')
+
+          if [ -z "$TOKEN" ]; then
+            echo "Could not generate SonarQube token."
+            exit 1
+          fi
+
+          echo "::add-mask::$TOKEN"
+          echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
+
+      - name: Run tests and SonarQube analysis
+        run: |
+          mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+            -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
+            -Dsonar.projectName="${SONAR_PROJECT_NAME}" \
+            -Dsonar.host.url=http://localhost:9000 \
+            -Dsonar.token=${{ steps.sonar-token.outputs.token }} \
+            -Dsonar.coverage.jacoco.xmlReportPaths="**/target/site/jacoco/jacoco.xml,**/target/site/jacoco-it/jacoco.xml,**/target/site/jacoco-aggregate/jacoco.xml" \
+            -Dsonar.qualitygate.wait=true \
+            -Dsonar.qualitygate.timeout=300
+
+      - name: Check JaCoCo reports after Sonar
+        if: always()
+        run: |
+          echo "Searching for JaCoCo XML reports..."
+          find . \( \
+            -path "*/target/site/jacoco/jacoco.xml" -o \
+            -path "*/target/site/jacoco-it/jacoco.xml" -o \
+            -path "*/target/site/jacoco-aggregate/jacoco.xml" \
+          \) -print
+
+      - name: Export SonarQube results
+        if: always()
+        run: |
+          mkdir -p sonarqube-results
+
+          if [ ! -f target/sonar/report-task.txt ]; then
+            echo "SonarQube report-task.txt not found. Analysis may have failed before report generation."
+            exit 0
+          fi
+
+          CE_TASK_ID=$(grep "ceTaskId" target/sonar/report-task.txt | cut -d'=' -f2)
+
+          echo "CE Task ID: $CE_TASK_ID"
+
+          for i in {1..30}; do
+            curl -s -u "admin:${SONAR_ADMIN_PASSWORD}" \
+              "http://localhost:9000/api/ce/task?id=${CE_TASK_ID}" \
+              -o sonarqube-results/ce-task.json
+
+            CE_STATUS=$(python3 -c "import json; print(json.load(open('sonarqube-results/ce-task.json'))['task']['status'])")
+
+            echo "Compute Engine status: $CE_STATUS"
+
+            if [ "$CE_STATUS" = "SUCCESS" ]; then
+              break
+            fi
+
+            if [ "$CE_STATUS" = "FAILED" ]; then
+              echo "SonarQube Compute Engine task failed."
+              cat sonarqube-results/ce-task.json
+              exit 1
+            fi
+
+            sleep 10
+          done
+
+          ANALYSIS_ID=$(python3 -c "import json; print(json.load(open('sonarqube-results/ce-task.json'))['task'].get('analysisId', ''))")
+
+          if [ -z "$ANALYSIS_ID" ]; then
+            echo "Could not find SonarQube analysisId."
+            cat sonarqube-results/ce-task.json
+            exit 0
+          fi
+
+          curl -s -u "admin:${SONAR_ADMIN_PASSWORD}" \
+            "http://localhost:9000/api/qualitygates/project_status?analysisId=${ANALYSIS_ID}" \
+            -o sonarqube-results/quality-gate.json
+
+          curl -s -u "admin:${SONAR_ADMIN_PASSWORD}" \
+            "http://localhost:9000/api/measures/component?component=${SONAR_PROJECT_KEY}&metricKeys=bugs,vulnerabilities,code_smells,coverage,duplicated_lines_density,ncloc" \
+            -o sonarqube-results/measures.json
+
+      - name: Print SonarQube result summary
+        if: always()
+        run: |
+          echo "## SonarQube Analysis Result" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          if [ ! -f sonarqube-results/quality-gate.json ]; then
+            echo "SonarQube result was not generated." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          QUALITY_GATE=$(python3 -c "import json; print(json.load(open('sonarqube-results/quality-gate.json'))['projectStatus']['status'])")
+
+          echo "**Quality Gate:** $QUALITY_GATE" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Metric | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---:|" >> "$GITHUB_STEP_SUMMARY"
+
+          python3 << 'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+
+          metric_names = {
+              "bugs": "Bugs",
+              "vulnerabilities": "Vulnerabilities",
+              "code_smells": "Code Smells",
+              "coverage": "Coverage (%)",
+              "duplicated_lines_density": "Duplicated Lines (%)",
+              "ncloc": "Lines of Code"
+          }
+
+          with open("sonarqube-results/measures.json") as f:
+              data = json.load(f)
+
+          measures = data.get("component", {}).get("measures", [])
+
+          for item in measures:
+              metric = item.get("metric")
+              value = item.get("value", "N/A")
+              print(f"| {metric_names.get(metric, metric)} | {value} |")
+          PY
+
+      - name: Upload SonarQube result files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sonarqube-results
+          path: sonarqube-results
+
+      - name: Stop SonarQube
+        if: always()
+        run: docker compose -f docker-compose-local.yml down -v
+
+  docker:
+    name: Docker Build
+    needs:
+      - verify
+      - sonar
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        service:
+          - discovery-server
+          - config-server
+          - api-gateway
+          - auth-service
+          - campaign-service
+          - dashboard-service
+          - log-service
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build ${{ matrix.service }} image for pull request
+        if: github.event_name == 'pull_request'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./${{ matrix.service }}/Dockerfile
+          push: false
+
+      - name: Login to Docker Hub
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push ${{ matrix.service }} image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./${{ matrix.service }}/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/campaign-${{ matrix.service }}:latest

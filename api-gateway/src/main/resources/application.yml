@@ -1,0 +1,135 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: api-gateway
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: ${REDIS_TIMEOUT:2s}
+  cloud:
+    loadbalancer:
+      retry:
+        enabled: true
+    gateway:
+      server:
+        webflux:
+          default-filters:
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@requestRateLimiterKeyResolver}"
+                redis-rate-limiter.replenishRate: ${RATE_LIMITER_REPLENISH_RATE:1} # -> Redis adds 1 token per second
+                redis-rate-limiter.burstCapacity: ${RATE_LIMITER_BURST_CAPACITY:5} # -> Bucket can hold max 5 tokens
+                redis-rate-limiter.requestedTokens: ${RATE_LIMITER_REQUESTED_TOKENS:5} # -> Each request costs 5 tokens
+          routes:
+          - id: auth-service-api
+            uri: ${AUTH_SERVICE_URI:lb://auth-service}
+            predicates:
+            - Path=/api/v1/auth/**
+          - id: campaign-service-api
+            uri: ${CAMPAIGN_SERVICE_URI:lb://campaign-service}
+            predicates:
+            - Path=/api/v1/campaigns/**
+          - id: dashboard-service-api
+            uri: ${DASHBOARD_SERVICE_URI:lb://dashboard-service}
+            predicates:
+            - Path=/api/v1/dashboard/**
+          - id: log-service-api
+            uri: ${LOG_SERVICE_URI:lb://log-service}
+            predicates:
+            - Path=/api/v1/logs/**
+          - id: auth-service-openapi
+            uri: ${AUTH_SERVICE_URI:lb://auth-service}
+            predicates:
+            - Path=/auth/v3/api-docs,/auth/v3/api-docs/**
+            filters:
+            - StripPrefix=1
+          - id: campaign-service-openapi
+            uri: ${CAMPAIGN_SERVICE_URI:lb://campaign-service}
+            predicates:
+            - Path=/campaign/v3/api-docs,/campaign/v3/api-docs/**
+            filters:
+            - StripPrefix=1
+          - id: dashboard-service-openapi
+            uri: ${DASHBOARD_SERVICE_URI:lb://dashboard-service}
+            predicates:
+            - Path=/dashboard/v3/api-docs,/dashboard/v3/api-docs/**
+            filters:
+            - StripPrefix=1
+          - id: log-service-openapi
+            uri: ${LOG_SERVICE_URI:lb://log-service}
+            predicates:
+            - Path=/logs/v3/api-docs,/logs/v3/api-docs/**
+            filters:
+            - StripPrefix=1
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    urls-primary-name: Auth Service
+    urls:
+    - name: Auth Service
+      url: /openapi/auth
+    - name: Campaign Service
+      url: /openapi/campaign
+    - name: Dashboard Service
+      url: /openapi/dashboard
+    - name: Log Service
+      url: /openapi/logs
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka}
+  instance:
+    prefer-ip-address: true
+    ip-address: ${EUREKA_INSTANCE_IP_ADDRESS:127.0.0.1}
+    instance-id: ${spring.application.name}:${server.port}
+management:
+  # Metrics are scraped by Prometheus. Disable the OTLP meter registry; OTLP is used only for traces.
+  otlp:
+    metrics:
+      export:
+        enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  tracing:
+    sampling:
+      probability: ${MANAGEMENT_TRACING_SAMPLING_PROBABILITY:1.0}
+    propagation:
+      type: w3c
+    export:
+      otlp:
+        enabled: ${MANAGEMENT_TRACING_EXPORT_OTLP_ENABLED:true}
+  opentelemetry:
+    resource-attributes:
+      service.name: ${OTEL_SERVICE_NAME:${spring.application.name}}
+    enabled: true
+    tracing:
+      export:
+        otlp:
+          endpoint: ${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:http://localhost:4317}
+          transport: ${OTEL_EXPORTER_OTLP_TRACES_PROTOCOL:grpc}
+app:
+  openapi:
+    auth-service-url: ${AUTH_SERVICE_OPENAPI_URL:lb://auth-service/v3/api-docs}
+    campaign-service-url: ${CAMPAIGN_SERVICE_OPENAPI_URL:lb://campaign-service/v3/api-docs}
+    dashboard-service-url: ${DASHBOARD_SERVICE_OPENAPI_URL:lb://dashboard-service/v3/api-docs}
+    log-service-url: ${LOG_SERVICE_OPENAPI_URL:lb://log-service/v3/api-docs}
+  jwt:
+    issuer: allianz-campaign-api
+    expiration-minutes: 120
+    public-key-location: ${JWT_PUBLIC_KEY_LOCATION:classpath:keys/public.pem}
+logging:
+  file:
+    name: ${LOGGING_FILE_NAME:logs/api-gateway.log}
+  pattern:
+    level: '%5p [api-gateway,%X{traceId:-},%X{spanId:-}]'

@@ -1,0 +1,83 @@
+server:
+  port: 8084
+spring:
+  application:
+    name: log-service
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: log-service
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.casestudy.insurancecampaign.*
+        spring.json.value.default.type: com.casestudy.insurancecampaign.common.event.SlowRequestLogEvent
+  elasticsearch:
+    uris: ${ELASTICSEARCH_URIS:http://localhost:9200}
+    connection-timeout: ${SPRING_ELASTICSEARCH_CONNECTION_TIMEOUT:10s}
+    socket-timeout: ${SPRING_ELASTICSEARCH_SOCKET_TIMEOUT:30s}
+  threads:
+    virtual:
+      enabled: true
+eureka:
+  client:
+    enabled: true
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka}
+  instance:
+    prefer-ip-address: true
+    ip-address: ${EUREKA_INSTANCE_IP_ADDRESS:127.0.0.1}
+    instance-id: ${spring.application.name}:${server.port}
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    disable-swagger-default-url: false
+  cache:
+    disabled: true
+management:
+  # Metrics are scraped by Prometheus. Disable the OTLP meter registry; OTLP is used only for traces.
+  otlp:
+    metrics:
+      export:
+        enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  tracing:
+    sampling:
+      probability: ${MANAGEMENT_TRACING_SAMPLING_PROBABILITY:1.0}
+    propagation:
+      type: w3c
+    export:
+      otlp:
+        enabled: ${MANAGEMENT_TRACING_EXPORT_OTLP_ENABLED:true}
+  opentelemetry:
+    resource-attributes:
+      service.name: ${OTEL_SERVICE_NAME:${spring.application.name}}
+    enabled: true
+    tracing:
+      export:
+        otlp:
+          endpoint: ${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:http://localhost:4317}
+          transport: ${OTEL_EXPORTER_OTLP_TRACES_PROTOCOL:grpc}
+app:
+  slow-request-threshold-ms: 5
+  kafka:
+    topics:
+      log-events: log-events
+      campaign-events: campaign-events
+  jwt:
+    issuer: allianz-campaign-api
+    expiration-minutes: 120
+    public-key-location: ${JWT_PUBLIC_KEY_LOCATION:classpath:keys/public.pem}
+logging:
+  file:
+    name: ${LOGGING_FILE_NAME:logs/log-service.log}
+  pattern:
+    level: '%5p [log-service,%X{traceId:-},%X{spanId:-}]'

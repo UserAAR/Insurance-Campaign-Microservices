@@ -1,0 +1,49 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: insurance-service-file-logs
+    static_configs:
+      - targets: [localhost]
+        labels:
+          job: api-gateway-logs
+          service: api-gateway
+          __path__: /var/log/insurance/api-gateway.log
+      - targets: [localhost]
+        labels:
+          job: auth-service-logs
+          service: auth-service
+          __path__: /var/log/insurance/auth-service.log
+      - targets: [localhost]
+        labels:
+          job: campaign-service-logs
+          service: campaign-service
+          __path__: /var/log/insurance/campaign-service.log
+      - targets: [localhost]
+        labels:
+          job: dashboard-service-logs
+          service: dashboard-service
+          __path__: /var/log/insurance/dashboard-service.log
+      - targets: [localhost]
+        labels:
+          job: log-service-logs
+          service: log-service
+          __path__: /var/log/insurance/log-service.log
+    pipeline_stages:
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2}T\S+)\s+(?P<level>TRACE|DEBUG|INFO|WARN|ERROR)\s+\[[^,\]]+,(?P<trace_id>[^,]*),(?P<span_id>[^\]]*)\].*$'
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+          action_on_failure: fudge
+      - labels:
+          level:
+          trace_id:
+          span_id:

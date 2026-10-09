@@ -1,0 +1,114 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: auth-service
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+  datasource:
+    url: ${AUTH_DB_URL:jdbc:postgresql://localhost:5433/auth_db}
+    username: ${AUTH_DB_USERNAME:auth_user}
+    password: ${AUTH_DB_PASSWORD:auth_password}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.yml
+  threads:
+    virtual:
+      enabled: true
+  http:
+    serviceclient:
+      log-service:
+        base-url: ${LOG_SERVICE_URL:http://localhost:8084}
+eureka:
+  client:
+    enabled: true
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka}
+  instance:
+    prefer-ip-address: true
+    ip-address: ${EUREKA_INSTANCE_IP_ADDRESS:127.0.0.1}
+    instance-id: ${spring.application.name}:${server.port}
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    disable-swagger-default-url: false
+  cache:
+    disabled: true
+management:
+  # Metrics are scraped by Prometheus. Disable the OTLP meter registry; OTLP is used only for traces.
+  otlp:
+    metrics:
+      export:
+        enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  tracing:
+    sampling:
+      probability: ${MANAGEMENT_TRACING_SAMPLING_PROBABILITY:1.0}
+    propagation:
+      type: w3c
+    export:
+      otlp:
+        enabled: ${MANAGEMENT_TRACING_EXPORT_OTLP_ENABLED:true}
+  opentelemetry:
+    resource-attributes:
+      service.name: ${OTEL_SERVICE_NAME:${spring.application.name}}
+    enabled: true
+    tracing:
+      export:
+        otlp:
+          endpoint: ${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:http://localhost:4317}
+          transport: ${OTEL_EXPORTER_OTLP_TRACES_PROTOCOL:grpc}
+app:
+  jwt:
+    issuer: allianz-campaign-api
+    expiration-minutes: 120
+    public-key-location: ${JWT_PUBLIC_KEY_LOCATION:classpath:keys/public.pem}
+    private-key-location: ${JWT_PRIVATE_KEY_LOCATION:classpath:keys/private.pem}
+  auth:
+    refresh-token-expiration-days: 7
+    password-reset-token-expiration-minutes: 15
+logging:
+  file:
+    name: ${LOGGING_FILE_NAME:logs/auth-service.log}
+  pattern:
+    level: '%5p [auth-service,%X{traceId:-},%X{spanId:-}]'
+resilience4j:
+  circuitbreaker:
+    instances:
+      logServiceHttpClient:
+        failure-rate-threshold: ${LOG_SERVICE_CB_FAILURE_RATE_THRESHOLD:50}
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: ${LOG_SERVICE_CB_SLIDING_WINDOW_SIZE:10}
+        minimum-number-of-calls: ${LOG_SERVICE_CB_MINIMUM_NUMBER_OF_CALLS:5}
+        permitted-number-of-calls-in-half-open-state: ${LOG_SERVICE_CB_PERMITTED_CALLS_IN_HALF_OPEN_STATE:3}
+        wait-duration-in-open-state: ${LOG_SERVICE_CB_WAIT_DURATION_IN_OPEN_STATE:30s}
+        record-exceptions:
+          - java.lang.RuntimeException
+        ignore-exceptions:
+          - io.github.resilience4j.bulkhead.BulkheadFullException
+
+  retry:
+    instances:
+      logServiceHttpClient:
+        max-attempts: ${LOG_SERVICE_RETRY_MAX_ATTEMPTS:3}
+        wait-duration: ${LOG_SERVICE_RETRY_WAIT_DURATION:500ms}
+        retry-exceptions:
+          - java.lang.RuntimeException
+        ignore-exceptions:
+          - io.github.resilience4j.circuitbreaker.CallNotPermittedException
+          - io.github.resilience4j.bulkhead.BulkheadFullException
+
+  bulkhead:
+    instances:
+      logServiceHttpClient:
+        max-concurrent-calls: ${LOG_SERVICE_BULKHEAD_MAX_CONCURRENT_CALLS:10}
+        max-wait-duration: ${LOG_SERVICE_BULKHEAD_MAX_WAIT_DURATION:0ms}

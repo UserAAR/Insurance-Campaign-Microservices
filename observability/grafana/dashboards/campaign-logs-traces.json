@@ -1,0 +1,214 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{job=~\".*-logs\", service=~\"${service:regex}\"}",
+          "queryType": "range",
+          "refId": "A",
+          "maxLines": 500
+        }
+      ],
+      "title": "Service Logs from Loki",
+      "type": "logs",
+      "description": "Shows file logs for the selected services. When All is selected, logs from all five application services are interleaved and identified by the service label."
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 10
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum by (job) (rate(http_server_requests_seconds_count{job=~\"${service:regex}\", uri!~\"/actuator.*\"}[$__rate_interval]))",
+          "refId": "A",
+          "legendFormat": "{{job}}",
+          "interval": ""
+        }
+      ],
+      "title": "HTTP Request Rate",
+      "type": "timeseries",
+      "description": "Prometheus request rate filtered by the same Service selector."
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 10
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (service, level) (count_over_time({job=~\".*-logs\", service=~\"${service:regex}\", level=~\"TRACE|DEBUG|INFO|WARN|ERROR\"}[$__auto]))",
+          "refId": "A",
+          "queryType": "range",
+          "legendFormat": "{{service}} / {{level}}"
+        }
+      ],
+      "title": "Log Count per Interval by Service and Level",
+      "type": "timeseries",
+      "description": "Counts parsed log lines for the selected services and excludes multiline continuation records without a recognized level.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "min": 0,
+          "unit": "short"
+        },
+        "overrides": []
+      }
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "tags": [
+    "campaign",
+    "logs",
+    "tempo",
+    "loki",
+    "opentelemetry"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "hide": 0,
+        "includeAll": true,
+        "label": "Service",
+        "multi": true,
+        "name": "service",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "api-gateway",
+            "value": "api-gateway"
+          },
+          {
+            "selected": false,
+            "text": "auth-service",
+            "value": "auth-service"
+          },
+          {
+            "selected": false,
+            "text": "campaign-service",
+            "value": "campaign-service"
+          },
+          {
+            "selected": false,
+            "text": "dashboard-service",
+            "value": "dashboard-service"
+          },
+          {
+            "selected": false,
+            "text": "log-service",
+            "value": "log-service"
+          }
+        ],
+        "query": "api-gateway,auth-service,campaign-service,dashboard-service,log-service",
+        "skipUrlSync": false,
+        "type": "custom",
+        "allValue": "api-gateway|auth-service|campaign-service|dashboard-service|log-service",
+        "description": "Fixed application-service list. It does not depend on whether Loki or Tempo already contains data."
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timezone": "browser",
+  "title": "Campaign - Logs and Traces",
+  "uid": "campaign-logs-traces",
+  "version": 4,
+  "weekStart": "",
+  "description": "Unified logs and HTTP metrics dashboard. The fixed multi-select Service variable controls all three panels. Promtail collects logs from all five application services."
+}

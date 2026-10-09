@@ -1,0 +1,70 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: dashboard-service
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+  threads:
+    virtual:
+      enabled: true
+grpc:
+  client:
+    campaign-service:
+      address: ${CAMPAIGN_GRPC_ADDRESS:static://localhost:9090}
+      negotiation-type: plaintext
+eureka:
+  client:
+    enabled: true
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka}
+  instance:
+    prefer-ip-address: true
+    ip-address: ${EUREKA_INSTANCE_IP_ADDRESS:127.0.0.1}
+    instance-id: ${spring.application.name}:${server.port}
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    disable-swagger-default-url: false
+  cache:
+    disabled: true
+management:
+  # Metrics are scraped by Prometheus. Disable the OTLP meter registry; OTLP is used only for traces.
+  otlp:
+    metrics:
+      export:
+        enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  tracing:
+    sampling:
+      probability: ${MANAGEMENT_TRACING_SAMPLING_PROBABILITY:1.0}
+    propagation:
+      type: w3c
+    export:
+      otlp:
+        enabled: ${MANAGEMENT_TRACING_EXPORT_OTLP_ENABLED:true}
+  opentelemetry:
+    resource-attributes:
+      service.name: ${OTEL_SERVICE_NAME:${spring.application.name}}
+    enabled: true
+    tracing:
+      export:
+        otlp:
+          endpoint: ${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:http://localhost:4317}
+          transport: ${OTEL_EXPORTER_OTLP_TRACES_PROTOCOL:grpc}
+app:
+  jwt:
+    issuer: allianz-campaign-api
+    expiration-minutes: 120
+    public-key-location: ${JWT_PUBLIC_KEY_LOCATION:classpath:keys/public.pem}
+logging:
+  file:
+    name: ${LOGGING_FILE_NAME:logs/dashboard-service.log}
+  pattern:
+    level: '%5p [dashboard-service,%X{traceId:-},%X{spanId:-}]'

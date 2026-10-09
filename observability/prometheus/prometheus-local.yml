@@ -1,0 +1,41 @@
+global:
+  scrape_interval: 15s
+
+# Local development Prometheus config.
+# Prometheus itself runs in Docker, but Spring Boot services run on your host machine.
+# Therefore targets use host.docker.internal instead of Docker service names.
+scrape_configs:
+  - job_name: discovery-server-local
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8761"]
+
+  - job_name: config-server-local
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8888"]
+
+  - job_name: api-gateway-local
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8080"]
+
+  - job_name: auth-service-local
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8081"]
+
+  - job_name: campaign-service-local
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8082"]
+
+  - job_name: dashboard-service-local
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8083"]
+
+  - job_name: log-service-local
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8084"]

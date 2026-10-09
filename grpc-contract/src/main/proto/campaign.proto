@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.casestudy.insurancecampaign.grpc";
+option java_outer_classname = "CampaignProto";
+
+service CampaignGrpcService {
+  rpc GetCampaignStatistics(CampaignStatisticsRequest) returns (CampaignStatisticsResponse);
+  rpc GetCampaignHistory(CampaignHistoryRequest) returns (CampaignHistoryResponse);
+}
+
+message CampaignStatisticsRequest {}
+
+message CampaignStatisticsResponse {
+  repeated CampaignStatusCount counts = 1;
+}
+
+message CampaignStatusCount {
+  string status = 1;
+  int64 count = 2;
+}
+
+message CampaignHistoryRequest {
+  string campaignId = 1;
+}
+
+message CampaignHistoryResponse {
+  repeated CampaignHistoryItem items = 1;
+}
+
+message CampaignHistoryItem {
+  string previousStatus = 1;
+  string newStatus = 2;
+  string reason = 3;
+  string changedAt = 4;
+}

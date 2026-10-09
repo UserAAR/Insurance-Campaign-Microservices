@@ -1,0 +1,123 @@
+name: Mark Done On Merge
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  mark-done:
+    name: Keep only done label on merged PR and linked issue
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+
+    steps:
+      - name: Keep only done label on PR and linked issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.INSURANCE_GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const pr = context.payload.pull_request;
+            const doneLabel = "done";
+
+            async function verifyDoneLabelExists() {
+              try {
+                await github.rest.issues.getLabel({
+                  owner,
+                  repo,
+                  name: doneLabel
+                });
+
+                core.info(`Label '${doneLabel}' exists.`);
+              } catch (error) {
+                if (error.status === 404) {
+                  core.setFailed(`Label '${doneLabel}' does not exist. Please create it first.`);
+                  return;
+                }
+
+                throw error;
+              }
+            }
+
+            async function keepOnlyDoneLabel(issueNumber) {
+              core.info(`Replacing labels on #${issueNumber} with only '${doneLabel}'`);
+
+              await github.rest.issues.setLabels({
+                owner,
+                repo,
+                issue_number: issueNumber,
+                labels: [doneLabel]
+              });
+            }
+
+            async function findLinkedIssuesFromDevelopmentSection() {
+              const query = `
+                query($owner: String!, $repo: String!, $number: Int!) {
+                  repository(owner: $owner, name: $repo) {
+                    pullRequest(number: $number) {
+                      closingIssuesReferences(first: 50) {
+                        nodes {
+                          number
+                          title
+                        }
+                      }
+                    }
+                  }
+                }
+              `;
+
+              const result = await github.graphql(query, {
+                owner,
+                repo,
+                number: pr.number
+              });
+
+              return result.repository.pullRequest.closingIssuesReferences.nodes
+                .map(issue => issue.number);
+            }
+
+            function findIssueNumbersFromPrBody() {
+              const body = pr.body || "";
+              const issueNumbers = new Set();
+
+              const patterns = [
+                /\b(?:close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#(\d+)/gi,
+                /\b(?:related task|related issue|task|issue)\s*:?\s+#(\d+)/gi
+              ];
+
+              for (const pattern of patterns) {
+                for (const match of body.matchAll(pattern)) {
+                  issueNumbers.add(Number(match[1]));
+                }
+              }
+
+              return [...issueNumbers];
+            }
+
+            await verifyDoneLabelExists();
+
+            // Pull Requests are also issue objects in GitHub.
+            // This removes labels like "feature" and keeps only "done".
+            await keepOnlyDoneLabel(pr.number);
+
+            const developmentIssues = await findLinkedIssuesFromDevelopmentSection();
+            const bodyIssues = findIssueNumbersFromPrBody();
+
+            const relatedIssues = [
+              ...new Set([...developmentIssues, ...bodyIssues])
+            ];
+
+            if (relatedIssues.length === 0) {
+              core.info("No linked issue found from Development section or PR body.");
+              return;
+            }
+
+            for (const issueNumber of relatedIssues) {
+              await keepOnlyDoneLabel(issueNumber);
+            }

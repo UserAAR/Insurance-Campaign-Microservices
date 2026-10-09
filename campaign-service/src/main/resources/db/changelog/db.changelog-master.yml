@@ -1,0 +1,113 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-campaigns
+      author: casestudy
+      changes:
+        - createTable:
+            tableName: campaigns
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: duplicate_of
+                  type: uuid
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+        - createIndex:
+            tableName: campaigns
+            indexName: idx_campaign_duplicate_lookup
+            columns:
+              - column:
+                  name: category
+              - column:
+                  name: title
+              - column:
+                  name: description
+  - changeSet:
+      id: 002-create-campaign-status-histories
+      author: casestudy
+      changes:
+        - createTable:
+            tableName: campaign_status_histories
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: campaign_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: previous_status
+                  type: varchar(30)
+              - column:
+                  name: new_status
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reason
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: campaign_status_histories
+            baseColumnNames: campaign_id
+            referencedTableName: campaigns
+            referencedColumnNames: id
+            constraintName: fk_campaign_status_history_campaign
+
+  - changeSet:
+      id: 003-prevent-duplicate-campaigns
+      author: casestudy
+      changes:
+        - sql:
+            splitStatements: false
+            sql: |
+              CREATE UNIQUE INDEX IF NOT EXISTS uk_campaign_unique_non_duplicate
+              ON campaigns (category, title, description)
+              WHERE status <> 'DUPLICATE';
+      rollback:
+        - sql:
+            sql: DROP INDEX IF EXISTS uk_campaign_unique_non_duplicate;

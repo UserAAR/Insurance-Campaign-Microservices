@@ -1,0 +1,216 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-app-users
+      author: casestudy
+      changes:
+        - createTable:
+            tableName: app_users
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: roles
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+        - insert:
+            tableName: app_users
+            columns:
+              - column: { name: id, value: "11111111-1111-1111-1111-111111111111" }
+              - column: { name: username, value: "demo" }
+              - column: { name: password, value: "{noop}password" }
+              - column: { name: roles, value: "ROLE_USER,ROLE_ADMIN" }
+
+  - changeSet:
+      id: 002-extend-app-users-for-self-contained-auth
+      author: casestudy
+      changes:
+        - addColumn:
+            tableName: app_users
+            columns:
+              - column:
+                  name: email
+                  type: varchar(150)
+              - column:
+                  name: full_name
+                  type: varchar(150)
+              - column:
+                  name: status
+                  type: varchar(30)
+                  defaultValue: ACTIVE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+        - update:
+            tableName: app_users
+            columns:
+              - column: { name: email, value: "demo@example.com" }
+              - column: { name: full_name, value: "Demo User" }
+            where: username = 'demo'
+        - addUniqueConstraint:
+            tableName: app_users
+            columnNames: email
+            constraintName: uk_app_users_email
+        - insert:
+            tableName: app_users
+            columns:
+              - column: { name: id, value: "22222222-2222-2222-2222-222222222222" }
+              - column: { name: username, value: "admin" }
+              - column: { name: email, value: "admin@example.com" }
+              - column: { name: full_name, value: "Admin User" }
+              - column: { name: password, value: "{noop}password" }
+              - column: { name: roles, value: "ROLE_ADMIN" }
+              - column: { name: status, value: "ACTIVE" }
+
+  - changeSet:
+      id: 003-create-refresh-tokens
+      author: casestudy
+      changes:
+        - createTable:
+            tableName: refresh_tokens
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: token_hash
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: expires_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: revoked_at
+                  type: timestamp with time zone
+        - addForeignKeyConstraint:
+            baseTableName: refresh_tokens
+            baseColumnNames: user_id
+            referencedTableName: app_users
+            referencedColumnNames: id
+            constraintName: fk_refresh_tokens_user
+        - createIndex:
+            tableName: refresh_tokens
+            indexName: idx_refresh_tokens_user_id
+            columns:
+              - column:
+                  name: user_id
+        - createIndex:
+            tableName: refresh_tokens
+            indexName: idx_refresh_tokens_token_hash
+            columns:
+              - column:
+                  name: token_hash
+
+  - changeSet:
+      id: 004-create-password-reset-tokens
+      author: casestudy
+      changes:
+        - createTable:
+            tableName: password_reset_tokens
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: token_hash
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: expires_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: used_at
+                  type: timestamp with time zone
+        - addForeignKeyConstraint:
+            baseTableName: password_reset_tokens
+            baseColumnNames: user_id
+            referencedTableName: app_users
+            referencedColumnNames: id
+            constraintName: fk_password_reset_tokens_user
+        - createIndex:
+            tableName: password_reset_tokens
+            indexName: idx_password_reset_tokens_user_id
+            columns:
+              - column:
+                  name: user_id
+        - createIndex:
+            tableName: password_reset_tokens
+            indexName: idx_password_reset_tokens_token_hash
+            columns:
+              - column:
+                  name: token_hash
+
+  - changeSet:
+      id: 005-insert-default-role-user
+      author: casestudy
+      changes:
+        - insert:
+            tableName: app_users
+            columns:
+              - column: { name: id, value: "33333333-3333-3333-3333-333333333333" }
+              - column: { name: username, value: "user" }
+              - column: { name: email, value: "user@example.com" }
+              - column: { name: full_name, value: "Regular User" }
+              - column: { name: password, value: "{noop}password" }
+              - column: { name: roles, value: "ROLE_USER" }
+              - column: { name: status, value: "ACTIVE" }
