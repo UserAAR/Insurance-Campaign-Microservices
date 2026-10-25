@@ -1,0 +1,503 @@
+{
+ "checked": 290,
+ "suspects": [
+  {
+   "chapter": "02-system-overview.md",
+   "line": 23,
+   "ref": "CampaignService.java:140-150",
+   "candidates": [
+    "Conflict"
+   ]
+  },
+  {
+   "chapter": "02-system-overview.md",
+   "line": 23,
+   "ref": "GlobalExceptionHandler.java:36-52",
+   "candidates": [
+    "Conflict"
+   ]
+  },
+  {
+   "chapter": "02-system-overview.md",
+   "line": 42,
+   "ref": "AuthAuditLogController.java:29-35",
+   "candidates": [
+    "ROLE_INTERNAL_SERVICE"
+   ]
+  },
+  {
+   "chapter": "03-repository-and-build.md",
+   "line": 128,
+   "ref": "pom.xml:35-37",
+   "candidates": [
+    "dependency",
+    "tree"
+   ]
+  },
+  {
+   "chapter": "03-repository-and-build.md",
+   "line": 129,
+   "ref": "pom.xml:34",
+   "candidates": [
+    "dependency",
+    "tree"
+   ]
+  },
+  {
+   "chapter": "03-repository-and-build.md",
+   "line": 130,
+   "ref": "auth-service/pom.xml:16",
+   "candidates": [
+    "dependency",
+    "resilience4j-spring-boot4",
+    "tree"
+   ]
+  },
+  {
+   "chapter": "03-repository-and-build.md",
+   "line": 131,
+   "ref": "pom.xml:32",
+   "candidates": [
+    "resilience4j-spring-boot4"
+   ]
+  },
+  {
+   "chapter": "03-repository-and-build.md",
+   "line": 132,
+   "ref": "pom.xml:33",
+   "candidates": [
+    "resilience4j-spring-boot4"
+   ]
+  },
+  {
+   "chapter": "03-repository-and-build.md",
+   "line": 226,
+   "ref": "DashboardControllerTest.java:123",
+   "candidates": [
+    "Instant"
+   ]
+  },
+  {
+   "chapter": "03-repository-and-build.md",
+   "line": 332,
+   "ref": "pom.xml:105-109",
+   "candidates": [
+    "annotationProcessorPaths",
+    "dependencyManagement"
+   ]
+  },
+  {
+   "chapter": "04-java-spring-foundations.md",
+   "line": 50,
+   "ref": "CampaignServiceTest.java:37",
+   "candidates": [
+    "CampaignServiceTest"
+   ]
+  },
+  {
+   "chapter": "06-campaign-service.md",
+   "line": 82,
+   "ref": "CampaignService.java:60-67",
+   "candidates": [
+    "DUPLICATE",
+    "duplicateOf",
+    "edir",
+    "kampaniyanın",
+    "qadağan",
+    "statuslu",
+    "yenilənməsini"
+   ]
+  },
+  {
+   "chapter": "06-campaign-service.md",
+   "line": 127,
+   "ref": "CampaignRepository.java:13-18",
+   "candidates": [
+    "FAKT",
+    "qurulur"
+   ]
+  },
+  {
+   "chapter": "06-campaign-service.md",
+   "line": 127,
+   "ref": "CampaignService.java:140-150",
+   "candidates": [
+    "FAKT",
+    "qurulur"
+   ]
+  },
+  {
+   "chapter": "06-campaign-service.md",
+   "line": 356,
+   "ref": "CampaignRepository.java:20-26",
+   "candidates": [
+    "DUPLICATE",
+    "GROUP"
+   ]
+  },
+  {
+   "chapter": "07-persistence.md",
+   "line": 102,
+   "ref": "campaign-service/src/main/resources/application.yml:16-17",
+   "candidates": [
+    "EntityManagerFactory",
+    "classpath-d",
+    "olduqda"
+   ]
+  },
+  {
+   "chapter": "07-persistence.md",
+   "line": 153,
+   "ref": "auth-service/src/main/resources/db/changelog/db.changelog-master.yml:39-89",
+   "candidates": [
+    "edir",
+    "istifadəçisini",
+    "yeniləyir"
+   ]
+  },
+  {
+   "chapter": "08-validation-exceptions.md",
+   "line": 66,
+   "ref": "CampaignService.java:140-150",
+   "candidates": [
+    "ConversionService",
+    "MethodArgumentTypeMismatchException",
+    "PathVariable",
+    "UUID"
+   ]
+  },
+  {
+   "chapter": "08-validation-exceptions.md",
+   "line": 67,
+   "ref": "CampaignService.java:157-160",
+   "candidates": [
+    "DUPLICATE_CAMPAIGN"
+   ]
+  },
+  {
+   "chapter": "08-validation-exceptions.md",
+   "line": 100,
+   "ref": "AuthService.java:142-157",
+   "candidates": [
+    "BUSINESS_RULE_VIOLATION"
+   ]
+  },
+  {
+   "chapter": "08-validation-exceptions.md",
+   "line": 104,
+   "ref": "AuthService.java:207-212",
+   "candidates": [
+    "newPassword"
+   ]
+  },
+  {
+   "chapter": "08-validation-exceptions.md",
+   "line": 284,
+   "ref": "ServiceSecurityConfiguration.java:80-95",
+   "candidates": [
+    "ServiceSecurityConfiguration"
+   ]
+  },
+  {
+   "chapter": "08-validation-exceptions.md",
+   "line": 336,
+   "ref": "AuthAuditService.java:155-179",
+   "candidates": [
+    "UUID",
+    "WARN",
+    "devh-d",
+    "gRPC",
+    "səhv"
+   ]
+  },
+  {
+   "chapter": "09-auth-service.md",
+   "line": 24,
+   "ref": "GatewayJwtAuthenticationFilter.java:39-50",
+   "candidates": [
+    "permitAll"
+   ]
+  },
+  {
+   "chapter": "10-security-jwt.md",
+   "line": 68,
+   "ref": "PemKeyUtils.java:108-124",
+   "candidates": [
+    "PemKeyUtils"
+   ]
+  },
+  {
+   "chapter": "10-security-jwt.md",
+   "line": 207,
+   "ref": "CampaignController.java:43-44",
+   "candidates": [
+    "POST",
+    "campaigns"
+   ]
+  },
+  {
+   "chapter": "13-grpc.md",
+   "line": 88,
+   "ref": "CampaignGrpcEndpoint.java:39",
+   "candidates": [
+    "previousStatus"
+   ]
+  },
+  {
+   "chapter": "13-grpc.md",
+   "line": 89,
+   "ref": "CampaignGrpcClient.java:60",
+   "candidates": [
+    "previousStatus"
+   ]
+  },
+  {
+   "chapter": "13-grpc.md",
+   "line": 138,
+   "ref": "pom.xml:37",
+   "candidates": [
+    "grpc-client-spring-boot-starter",
+    "grpc-server-spring-boot-starter"
+   ]
+  },
+  {
+   "chapter": "14-http-clients-resilience.md",
+   "line": 205,
+   "ref": "AuthAuditServiceTest.java:229-264",
+   "candidates": [
+    "AuthAuditServiceTest"
+   ]
+  },
+  {
+   "chapter": "16-spring-cloud.md",
+   "line": 204,
+   "ref": "api-gateway/src/main/resources/application.yml:68-83",
+   "candidates": [
+    "springdoc-openapi-starter-webflux-ui"
+   ]
+  },
+  {
+   "chapter": "17-observability.md",
+   "line": 148,
+   "ref": "HttpServerObservationConfiguration.java:37-83",
+   "candidates": [
+    "common"
+   ]
+  },
+  {
+   "chapter": "18-containers-cicd.md",
+   "line": 151,
+   "ref": "ci-cd.yml:96-115",
+   "candidates": [
+    "clean",
+    "verify"
+   ]
+  },
+  {
+   "chapter": "20-end-to-end-workflows.md",
+   "line": 33,
+   "ref": "GatewayJwtAuthenticationFilter.java:76-95",
+   "candidates": [
+    "GatewayJwtAuthenticationFilter"
+   ]
+  },
+  {
+   "chapter": "20-end-to-end-workflows.md",
+   "line": 38,
+   "ref": "docker-compose.yml:62-65",
+   "candidates": [
+    "Path"
+   ]
+  },
+  {
+   "chapter": "20-end-to-end-workflows.md",
+   "line": 47,
+   "ref": "SlowRequestLoggingFilter.java:88-120",
+   "candidates": [
+    "SlowRequestLoggingFilter"
+   ]
+  },
+  {
+   "chapter": "20-end-to-end-workflows.md",
+   "line": 50,
+   "ref": "JwtAuthenticationFilter.java:68-83",
+   "candidates": [
+    "JwtAuthenticationFilter",
+    "common",
+    "optional",
+    "spring-kafka"
+   ]
+  },
+  {
+   "chapter": "20-end-to-end-workflows.md",
+   "line": 97,
+   "ref": "AuthAuditService.java:147-179",
+   "candidates": [
+    "AuthAuditLogService",
+    "auth-audit-logs",
+    "publishAudit",
+    "save"
+   ]
+  },
+  {
+   "chapter": "20-end-to-end-workflows.md",
+   "line": 172,
+   "ref": "campaign-service/src/main/resources/db/changelog/db.changelog-master.yml:101-113",
+   "candidates": [
+    "saveAndFlush"
+   ]
+  },
+  {
+   "chapter": "20-end-to-end-workflows.md",
+   "line": 278,
+   "ref": "dashboard-service/src/main/resources/application.yml:11-15",
+   "candidates": [
+    "CampaignGrpcClient",
+    "getStatistics"
+   ]
+  },
+  {
+   "chapter": "20-end-to-end-workflows.md",
+   "line": 279,
+   "ref": "docker-compose.yml:225",
+   "candidates": [
+    "CampaignGrpcClient",
+    "getStatistics"
+   ]
+  },
+  {
+   "chapter": "20-end-to-end-workflows.md",
+   "line": 401,
+   "ref": "AuthService.java:269-279",
+   "candidates": [
+    "REFRESH_TOKEN",
+    "revoked_at"
+   ]
+  },
+  {
+   "chapter": "20-end-to-end-workflows.md",
+   "line": 403,
+   "ref": "AuthService.java:244-260",
+   "candidates": [
+    "FORGOT_PASSWORD",
+    "idempotent",
+    "password_reset_tokens"
+   ]
+  },
+  {
+   "chapter": "20-end-to-end-workflows.md",
+   "line": 434,
+   "ref": "GatewayOpenApiController.java:87-105",
+   "candidates": [
+    "GatewayOpenApiController"
+   ]
+  },
+  {
+   "chapter": "20-end-to-end-workflows.md",
+   "line": 436,
+   "ref": "GatewayOpenApiController.java:128-140",
+   "candidates": [
+    "GatewayOpenApiController",
+    "WebClient",
+    "onErrorResume"
+   ]
+  },
+  {
+   "chapter": "21-engineering-evaluation.md",
+   "line": 39,
+   "ref": "LogServiceHttpClientConfiguration.java:32-48",
+   "candidates": [
+    "ROLE_INTERNAL_SERVICE"
+   ]
+  },
+  {
+   "chapter": "21-engineering-evaluation.md",
+   "line": 53,
+   "ref": "ServiceSecurityConfiguration.java:96-104",
+   "candidates": [
+    "ROLE_ADMIN",
+    "role"
+   ]
+  },
+  {
+   "chapter": "21-engineering-evaluation.md",
+   "line": 54,
+   "ref": "AuthService.java:205-230",
+   "candidates": [
+    "Qeydiyyat",
+    "forgot-password",
+    "həmi"
+   ]
+  },
+  {
+   "chapter": "21-engineering-evaluation.md",
+   "line": 56,
+   "ref": "AuthService.java:103-126",
+   "candidates": [
+    "qaytarır"
+   ]
+  },
+  {
+   "chapter": "21-engineering-evaluation.md",
+   "line": 57,
+   "ref": "CampaignService.java:162-169",
+   "candidates": [
+    "DataIntegrityViolationException",
+    "approve",
+    "deactivate",
+    "saveAndFlush",
+    "updatedAt"
+   ]
+  },
+  {
+   "chapter": "21-engineering-evaluation.md",
+   "line": 94,
+   "ref": "GatewayPemKeyUtils.java:59",
+   "candidates": [
+    "HttpSecurity",
+    "security"
+   ]
+  },
+  {
+   "chapter": "21-engineering-evaluation.md",
+   "line": 94,
+   "ref": "PemKeyUtils.java:59",
+   "candidates": [
+    "HttpSecurity",
+    "security"
+   ]
+  },
+  {
+   "chapter": "21-engineering-evaluation.md",
+   "line": 117,
+   "ref": "CampaignGrpcClient.java:25-29",
+   "candidates": [
+    "DUPLICATE",
+    "StatusNot",
+    "ensureNotDuplicate"
+   ]
+  },
+  {
+   "chapter": "23-production-runbook.md",
+   "line": 234,
+   "ref": "campaign-service/src/main/resources/db/changelog/db.changelog-master.yml:111-113",
+   "candidates": [
+    "latest"
+   ]
+  },
+  {
+   "chapter": "25-appendices.md",
+   "line": 88,
+   "ref": "GatewayOpenApiController.java:87-105",
+   "candidates": [
+    "auth",
+    "campaign",
+    "dashboard",
+    "html",
+    "logs",
+    "openapi",
+    "swagger-ui"
+   ]
+  }
+ ]
+}

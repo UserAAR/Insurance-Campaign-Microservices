@@ -1,0 +1,11 @@
+%% caption: Bütün xarici sorğular üçün ümumi qatlar (sadələşdirilmiş)
+flowchart LR
+    C[Klient] --> EF[429 cavab filtri]
+    EF --> RL[RequestRateLimiter<br/>Redis Lua]
+    RL --> JF[Gateway JWT filtri<br/>401 boş gövdə]
+    JF --> LB[lb:// + Eureka]
+    LB --> SF[SlowRequestLoggingFilter<br/>yalnız campaign, log]
+    SF --> SEC[Spring Security<br/>JwtAuthenticationFilter]
+    SEC --> CTRL["@PreAuthorize + Controller"]
+    CTRL --> SVC[Servis qatı]
+    SF -. "müddət > 5 ms" .-> K[(Kafka log-events)]

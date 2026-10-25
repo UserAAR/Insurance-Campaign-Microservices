@@ -1,0 +1,11 @@
+%% caption: Token həyat dövrü: login → refresh → logout / reset
+stateDiagram-v2
+    [*] --> Aktiv: login (INSERT hash)
+    Aktiv --> Ləğv: refresh (köhnə)
+    Ləğv --> [*]
+    Aktiv --> Ləğv2: logout
+    Aktiv --> Ləğv3: reset-password (hamısı)
+    Aktiv --> VaxtıKeçib: 7 gün
+    Ləğv2 --> [*]
+    Ləğv3 --> [*]
+    VaxtıKeçib --> [*]

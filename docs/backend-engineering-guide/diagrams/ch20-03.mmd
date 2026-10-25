@@ -1,0 +1,25 @@
+%% caption: Kampaniya yaradılması — sinxron yol və asinxron yan təsirlər
+sequenceDiagram
+    autonumber
+    participant C as Admin klient
+    participant G as api-gateway
+    participant R as Redis
+    participant S as campaign-service
+    participant DB as campaign_db
+    participant K as Kafka
+    participant L as log-service
+    C->>G: POST /api/v1/campaigns (Bearer)
+    G->>R: rate limit (user:admin)
+    G->>S: JWT etibarlı, lb:// ilə ötür
+    S->>S: yavaş sorğu filtri, Security, @Valid, @PreAuthorize
+    S->>DB: SELECT exists (dublikat)
+    S->>DB: INSERT campaigns (saveAndFlush)
+    S-)K: send campaign-events (key = id)
+    S->>DB: INSERT history + COMMIT
+    S->>R: evict campaign-statistics
+    S-)K: send log-events (müddət > 5 ms)
+    S-->>G: 201 ApiResponse
+    G-->>C: 201 CampaignResponse
+    K-)L: log-events
+    L->>L: ES slow-request-logs-a yaz
+    Note over K: campaign-events-in consumer-i yoxdur (F12)

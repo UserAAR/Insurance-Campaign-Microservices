@@ -1,0 +1,10 @@
+%% caption: Yavaş sorğu jurnalının həyat dövrü və öz-özünü qidalandıran dövrə
+flowchart LR
+    S1[campaign-service REST] -- "müddət > 5 ms" --> K[(log-events)]
+    K --> LC[SlowRequestLogConsumer]
+    LC -- uğur --> ES[(ES slow-request-logs)]
+    LC -- "3 təkrardan sonra" --> DLQ[(log-events.DLQ)]
+    DLQ --> DL[DLQ consumer: yalnız ERROR log]
+    A[Admin] --> G[api-gateway] --> LS["GET /api/v1/logs/slow-requests"]
+    LS --> ES
+    LS -- "bu sorğu da > 5 ms" --> K

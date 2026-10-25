@@ -1,0 +1,4 @@
+build/node_modules/
+build/package-lock.json
+build/.work/
+__pycache__/

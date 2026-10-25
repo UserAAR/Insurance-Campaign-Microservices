@@ -1,0 +1,10 @@
+%% caption: log-service-də Elasticsearch-ə iki yazma yolu və bir oxuma yolu
+flowchart TB
+    K[(Kafka log-events)] --> C[SlowRequestLogConsumer]
+    A["auth-service<br/>@Async audit"] -- "POST /api/v1/logs/auth-audit" --> AC[AuthAuditLogController]
+    ADM[Admin] -- "GET /api/v1/logs/slow-requests" --> SC[SlowRequestLogController]
+    C --> R1[SlowRequestLogRepository]
+    AC --> S[AuthAuditLogService] --> R2[AuthAuditLogRepository]
+    R1 -- "index: slow-request-logs" --> ES[(Elasticsearch<br/>single-node)]
+    R2 -- "index: auth-audit-logs" --> ES
+    SC -- "findAll(PageRequest), sıralamasız" --> ES

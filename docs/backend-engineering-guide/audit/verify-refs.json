@@ -1,0 +1,512 @@
+{
+ "total_refs": 459,
+ "total_excerpts": 70,
+ "errors": [],
+ "per_file": {
+  "campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/service/CampaignService.java": {
+   "refs": 52,
+   "excerpts": 9,
+   "errors": 0
+  },
+  "pom.xml": {
+   "refs": 23,
+   "excerpts": 3,
+   "errors": 0
+  },
+  "auth-service/src/main/resources/db/changelog/db.changelog-master.yml": {
+   "refs": 6,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/domain/CampaignCategory.java": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "campaign-service/src/test/java/com/casestudy/insurancecampaign/campaign/service/CampaignServiceTest.java": {
+   "refs": 2,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "common/src/main/java/com/casestudy/insurancecampaign/common/exception/GlobalExceptionHandler.java": {
+   "refs": 6,
+   "excerpts": 2,
+   "errors": 0
+  },
+  "dashboard-service/src/main/java/com/casestudy/insurancecampaign/dashboard/controller/DashboardController.java": {
+   "refs": 6,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "security/src/main/java/com/casestudy/insurancecampaign/security/ServiceSecurityConfiguration.java": {
+   "refs": 10,
+   "excerpts": 2,
+   "errors": 0
+  },
+  "campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/controller/CampaignController.java": {
+   "refs": 11,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "auth-service/src/main/java/com/casestudy/insurancecampaign/auth/config/LogServiceHttpClientConfiguration.java": {
+   "refs": 6,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "log-service/src/main/java/com/casestudy/insurancecampaign/log/controller/AuthAuditLogController.java": {
+   "refs": 5,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "auth-service/src/main/java/com/casestudy/insurancecampaign/auth/model/dto/request/RegisterRequest.java": {
+   "refs": 4,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "auth-service/src/main/java/com/casestudy/insurancecampaign/auth/model/enums/UserRole.java": {
+   "refs": 2,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/domain/CampaignStatus.java": {
+   "refs": 3,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "dashboard-service/src/main/resources/application.yml": {
+   "refs": 3,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "auth-service/src/main/resources/application.yml": {
+   "refs": 6,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "common/pom.xml": {
+   "refs": 5,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "docker-compose.yml": {
+   "refs": 26,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "auth-service/src/main/java/com/casestudy/insurancecampaign/auth/service/AuthAuditService.java": {
+   "refs": 8,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "campaign-service/pom.xml": {
+   "refs": 3,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "auth-service/pom.xml": {
+   "refs": 4,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/CampaignServiceApplication.java": {
+   "refs": 3,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "api-gateway/src/main/java/com/casestudy/insurancecampaign/gateway/filter/GatewayRateLimitErrorResponseFilter.java": {
+   "refs": 5,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "dashboard-service/src/test/java/com/casestudy/insurancecampaign/dashboard/controller/DashboardControllerTest.java": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "grpc-contract/pom.xml": {
+   "refs": 5,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/entity/CampaignEntity.java": {
+   "refs": 5,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "campaign-service/Dockerfile": {
+   "refs": 3,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "dashboard-service/src/main/java/com/casestudy/insurancecampaign/dashboard/client/CampaignGrpcClient.java": {
+   "refs": 8,
+   "excerpts": 2,
+   "errors": 0
+  },
+  "dashboard-service/src/test/java/com/casestudy/insurancecampaign/dashboard/client/CampaignGrpcClientTest.java": {
+   "refs": 3,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "common/src/main/java/com/casestudy/insurancecampaign/common/config/KafkaJsonConfiguration.java": {
+   "refs": 6,
+   "excerpts": 2,
+   "errors": 0
+  },
+  "auth-service/src/main/java/com/casestudy/insurancecampaign/auth/AuthServiceApplication.java": {
+   "refs": 2,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "common/src/main/java/com/casestudy/insurancecampaign/common/web/SlowRequestLoggingFilter.java": {
+   "refs": 9,
+   "excerpts": 2,
+   "errors": 0
+  },
+  "common/src/main/java/com/casestudy/insurancecampaign/common/config/VirtualThreadConfiguration.java": {
+   "refs": 2,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "security/src/main/java/com/casestudy/insurancecampaign/security/JwtProperties.java": {
+   "refs": 3,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "security/src/main/java/com/casestudy/insurancecampaign/security/JwtTokenService.java": {
+   "refs": 5,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "config-server/src/main/resources/config/application.yml": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "config-server/src/main/resources/application.yml": {
+   "refs": 2,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "common/src/main/java/com/casestudy/insurancecampaign/common/observability/HttpServerObservationConfiguration.java": {
+   "refs": 3,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "security/src/main/java/com/casestudy/insurancecampaign/security/JwtAuthenticationFilter.java": {
+   "refs": 5,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "auth-service/src/main/java/com/casestudy/insurancecampaign/auth/util/TokenHashUtils.java": {
+   "refs": 3,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "auth-service/src/main/java/com/casestudy/insurancecampaign/auth/controller/AuthController.java": {
+   "refs": 3,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "common/src/main/java/com/casestudy/insurancecampaign/common/api/ApiResponse.java": {
+   "refs": 2,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "common/src/main/java/com/casestudy/insurancecampaign/common/api/ApiError.java": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/mapper/CampaignMapper.java": {
+   "refs": 2,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "campaign-service/src/main/resources/application.yml": {
+   "refs": 13,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/grpc/CampaignGrpcEndpoint.java": {
+   "refs": 5,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "auth-service/src/main/java/com/casestudy/insurancecampaign/auth/model/mapper/AuthMapper.java": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/dto/CampaignPageResponse.java": {
+   "refs": 2,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "log-service/src/main/java/com/casestudy/insurancecampaign/log/controller/SlowRequestLogController.java": {
+   "refs": 6,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "log-service/src/test/java/com/casestudy/insurancecampaign/log/controller/SlowRequestLogControllerTest.java": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/domain/Campaign.java": {
+   "refs": 1,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "campaign-service/src/main/resources/db/changelog/db.changelog-master.yml": {
+   "refs": 9,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/repository/CampaignRepository.java": {
+   "refs": 5,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/repository/CampaignStatusHistoryRepository.java": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/entity/CampaignStatusHistoryEntity.java": {
+   "refs": 2,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "auth-service/src/main/java/com/casestudy/insurancecampaign/auth/model/entity/AppUserEntity.java": {
+   "refs": 3,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "auth-service/src/main/java/com/casestudy/insurancecampaign/auth/model/entity/RefreshTokenEntity.java": {
+   "refs": 1,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "auth-service/src/main/java/com/casestudy/insurancecampaign/auth/service/AuthService.java": {
+   "refs": 33,
+   "excerpts": 7,
+   "errors": 0
+  },
+  "auth-service/src/main/java/com/casestudy/insurancecampaign/auth/repository/RefreshTokenRepository.java": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "common/src/main/java/com/casestudy/insurancecampaign/common/exception/BusinessException.java": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "campaign-service/src/test/java/com/casestudy/insurancecampaign/campaign/base/AbstractTestContainerConfiguration.java": {
+   "refs": 5,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/dto/CreateCampaignRequest.java": {
+   "refs": 3,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "auth-service/src/main/java/com/casestudy/insurancecampaign/auth/model/dto/request/LoginRequest.java": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "auth-service/src/main/java/com/casestudy/insurancecampaign/auth/model/dto/request/ResetPasswordRequest.java": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "auth-service/src/main/java/com/casestudy/insurancecampaign/auth/util/StringUtils.java": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "log-service/src/main/java/com/casestudy/insurancecampaign/log/model/dto/request/AuthAuditLogRequest.java": {
+   "refs": 2,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "common/src/main/java/com/casestudy/insurancecampaign/common/exception/ErrorCode.java": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "campaign-service/src/test/java/com/casestudy/insurancecampaign/campaign/controller/CampaignControllerTest.java": {
+   "refs": 3,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "api-gateway/src/main/java/com/casestudy/insurancecampaign/gateway/filter/GatewayJwtAuthenticationFilter.java": {
+   "refs": 6,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "auth-service/src/main/java/com/casestudy/insurancecampaign/auth/config/AuthConfiguration.java": {
+   "refs": 1,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "auth-service/src/test/java/com/casestudy/insurancecampaign/auth/service/AuthServiceTest.java": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "security/src/main/java/com/casestudy/insurancecampaign/security/PemKeyUtils.java": {
+   "refs": 2,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "api-gateway/src/main/java/com/casestudy/insurancecampaign/gateway/config/GatewayRateLimiterConfiguration.java": {
+   "refs": 4,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "log-service/src/main/java/com/casestudy/insurancecampaign/log/service/SlowRequestLogConsumer.java": {
+   "refs": 5,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "log-service/src/main/java/com/casestudy/insurancecampaign/log/config/KafkaDlqConfiguration.java": {
+   "refs": 4,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "log-service/src/main/resources/application.yml": {
+   "refs": 3,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "log-service/src/main/java/com/casestudy/insurancecampaign/log/model/document/SlowRequestDocument.java": {
+   "refs": 4,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "log-service/src/main/java/com/casestudy/insurancecampaign/log/model/document/AuthAuditLogDocument.java": {
+   "refs": 2,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "log-service/src/main/java/com/casestudy/insurancecampaign/log/service/AuthAuditLogService.java": {
+   "refs": 2,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "grpc-contract/src/main/proto/campaign.proto": {
+   "refs": 3,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "auth-service/src/main/java/com/casestudy/insurancecampaign/auth/client/LogServiceHttpClient.java": {
+   "refs": 2,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "auth-service/src/main/java/com/casestudy/insurancecampaign/auth/model/domain/AuthAuditLog.java": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "auth-service/src/test/java/com/casestudy/insurancecampaign/auth/service/AuthAuditServiceTest.java": {
+   "refs": 3,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "api-gateway/src/main/resources/application.yml": {
+   "refs": 12,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "api-gateway/pom.xml": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "discovery-server/src/main/resources/application.yml": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "api-gateway/src/main/java/com/casestudy/insurancecampaign/gateway/config/GatewayLoadBalancerConfiguration.java": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "api-gateway/src/main/java/com/casestudy/insurancecampaign/gateway/openapi/GatewayOpenApiController.java": {
+   "refs": 5,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "observability/prometheus/prometheus.yml": {
+   "refs": 2,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "config-server/pom.xml": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "observability/otel-collector/otel-collector.yml": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "observability/tempo/tempo.yml": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "observability/promtail/promtail-config.yml": {
+   "refs": 3,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "observability/grafana/provisioning/datasources/datasources.yml": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "docker-compose-local.yml": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  ".github/workflows/ci-cd.yml": {
+   "refs": 4,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "campaign-service/src/test/java/com/casestudy/insurancecampaign/campaign/base/AbstractBaseServiceTest.java": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "dashboard-service/src/test/java/com/casestudy/insurancecampaign/dashboard/base/AbstractTestContainerConfiguration.java": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "campaign-service/src/test/java/com/casestudy/insurancecampaign/campaign/base/AbstractRestControllerTest.java": {
+   "refs": 2,
+   "excerpts": 1,
+   "errors": 0
+  },
+  "auth-service/src/test/java/com/casestudy/insurancecampaign/auth/base/AbstractRestControllerTest.java": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  },
+  "api-gateway/src/main/java/com/casestudy/insurancecampaign/gateway/security/GatewayPemKeyUtils.java": {
+   "refs": 1,
+   "excerpts": 0,
+   "errors": 0
+  }
+ }
+}

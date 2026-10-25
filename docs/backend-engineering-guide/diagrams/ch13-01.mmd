@@ -1,0 +1,28 @@
+%% caption: Dashboard statistikası — REST → gRPC → cache/DB
+sequenceDiagram
+    autonumber
+    participant C as Klient (admin token)
+    participant G as api-gateway
+    participant D as dashboard-service
+    participant CG as campaign-service gRPC :9090
+    participant S as CampaignService (proxy)
+    participant R as Redis
+    participant DB as campaign_db
+    C->>G: GET /api/v1/dashboard/classifieds/statistics
+    G->>G: rate limit + JWT yoxlaması
+    G->>D: lb://dashboard-service (Authorization ötürülür)
+    D->>D: JwtAuthenticationFilter, @PreAuthorize hasRole ADMIN
+    D->>CG: GetCampaignStatistics() blocking, deadline-sız, token-siz
+    CG->>S: getStatistics()
+    S->>R: GET campaign-statistics::SimpleKey []
+    alt cache-də var
+        R-->>S: HashMap (JDK serializasiya)
+    else yoxdur
+        S->>DB: SELECT status, count(id) GROUP BY status
+        S->>R: SET (TTL-siz)
+    end
+    S-->>CG: Map<String, Long> (DUPLICATE=0 daxil)
+    CG-->>D: CampaignStatisticsResponse
+    D->>D: yalnız 3 status, sabit sıra
+    D-->>G: 200 ApiResponse
+    G-->>C: 200

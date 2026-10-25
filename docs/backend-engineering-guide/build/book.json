@@ -1,0 +1,92 @@
+{
+  "meta": {
+    "kicker": "Layihə əsaslı backend mühəndislik bələdçisi",
+    "title": "Insurance Campaign Microservices: Java/Spring Boot backend sistemini dərindən öyrənmək",
+    "subtitle": "Real repozitoriya üzərində Spring Boot 4, Spring Cloud, PostgreSQL, Kafka, Elasticsearch, gRPC, Redis, təhlükəsizlik və observability",
+    "lines": [
+      "Repozitoriya: UserAAR/Insurance-Campaign-Microservices — təhlil olunan commit 1500818 (2026-10-09)",
+      "Stek: Java 25 · Spring Boot 4.1.0 · Spring Cloud 2025.1.2 · Hibernate 7.4 · Spring Kafka 4.1 · gRPC 1.80",
+      "Dil: Azərbaycan dili · Hədəf oxucu: təcrübəli, lakin 9–12 ay fasilə vermiş Java/Spring backend mühəndisi",
+      "Bu sənəd repozitoriyanın mənbə kodundan çıxarılıb; hər layihə-spesifik iddia fayl:sətir istinadı ilə verilir"
+    ],
+    "footer": "Insurance Campaign Microservices — Backend mühəndislik bələdçisi",
+    "pdfName": "Insurance-Campaign-Backend-Engineering-Guide-AZ.pdf"
+  },
+  "parts": [
+    {
+      "key": "I",
+      "title": "I hissə. Sistemi anlamaq",
+      "subtitle": "Biznes məqsədi, arxitektura xəritəsi, repozitoriya və build",
+      "chapters": [
+        "01-how-to-use.md",
+        "02-system-overview.md",
+        "03-repository-and-build.md"
+      ]
+    },
+    {
+      "key": "II",
+      "title": "II hissə. Təməlləri təzələmək",
+      "subtitle": "Java 25, Spring Boot 4, IoC/DI, auto-configuration, AOP, REST və təbəqəli dizayn",
+      "chapters": [
+        "04-java-spring-foundations.md",
+        "05-rest-layering.md"
+      ]
+    },
+    {
+      "key": "III",
+      "title": "III hissə. Layihənin nüvə implementasiyası",
+      "subtitle": "Campaign Service, persistence, validasiya, istisnalar, Auth Service və təhlükəsizlik",
+      "chapters": [
+        "06-campaign-service.md",
+        "07-persistence.md",
+        "08-validation-exceptions.md",
+        "09-auth-service.md",
+        "10-security-jwt.md"
+      ]
+    },
+    {
+      "key": "IV",
+      "title": "IV hissə. Texnologiyaları müstəqil öyrənmək",
+      "subtitle": "Kafka, Elasticsearch, gRPC, HTTP klientləri və Resilience4j, Redis, Spring Cloud, observability, konteynerlər, testlər",
+      "chapters": [
+        "11-kafka.md",
+        "12-elasticsearch.md",
+        "13-grpc.md",
+        "14-http-clients-resilience.md",
+        "15-redis.md",
+        "16-spring-cloud.md",
+        "17-observability.md",
+        "18-containers-cicd.md",
+        "19-testing.md"
+      ]
+    },
+    {
+      "key": "V",
+      "title": "V hissə. Uçdan-uca biznes axınları",
+      "subtitle": "Real icra yolları: giriş nöqtəsindən müşahidə olunan nəticəyə qədər",
+      "chapters": [
+        "20-end-to-end-workflows.md"
+      ]
+    },
+    {
+      "key": "VI",
+      "title": "VI hissə. Qiymətləndirmə və dizayn",
+      "subtitle": "Mühəndislik keyfiyyəti, kompromislər və oxşar sistemin layihələndirilməsi",
+      "chapters": [
+        "21-engineering-evaluation.md",
+        "22-designing-similar-system.md"
+      ]
+    },
+    {
+      "key": "VII",
+      "title": "VII hissə. Production və müsahibəyə hazırlıq",
+      "subtitle": "Runbook, troubleshooting, sistemin tam izahı, sual-cavablar və əlavələr",
+      "chapters": [
+        "23-production-runbook.md",
+        "24-interview.md",
+        "25-appendices.md",
+        "26-coverage-matrix.md"
+      ]
+    }
+  ]
+}

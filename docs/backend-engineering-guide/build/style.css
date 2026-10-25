@@ -1,0 +1,222 @@
+/* Backend Engineering Guide — çap üçün üslub (Chromium print engine) */
+
+@font-face { font-family: 'Guide Serif'; font-weight: 400; font-style: normal;
+  src: url(fonts/noto-serif-latin-400-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Guide Serif'; font-weight: 400; font-style: normal;
+  src: url(fonts/noto-serif-latin-ext-400-normal.woff2) format('woff2');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Guide Serif'; font-weight: 700; font-style: normal;
+  src: url(fonts/noto-serif-latin-700-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Guide Serif'; font-weight: 700; font-style: normal;
+  src: url(fonts/noto-serif-latin-ext-700-normal.woff2) format('woff2');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Guide Serif'; font-weight: 400; font-style: italic;
+  src: url(fonts/noto-serif-latin-400-italic.woff2) format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Guide Serif'; font-weight: 400; font-style: italic;
+  src: url(fonts/noto-serif-latin-ext-400-italic.woff2) format('woff2');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Guide Sans'; font-weight: 400;
+  src: url(fonts/noto-sans-latin-400-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Guide Sans'; font-weight: 400;
+  src: url(fonts/noto-sans-latin-ext-400-normal.woff2) format('woff2');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Guide Sans'; font-weight: 700;
+  src: url(fonts/noto-sans-latin-700-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Guide Sans'; font-weight: 700;
+  src: url(fonts/noto-sans-latin-ext-700-normal.woff2) format('woff2');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Guide Mono'; font-weight: 400;
+  src: url(fonts/jetbrains-mono-latin-400-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Guide Mono'; font-weight: 400;
+  src: url(fonts/jetbrains-mono-latin-ext-400-normal.woff2) format('woff2');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Guide Mono'; font-weight: 700;
+  src: url(fonts/jetbrains-mono-latin-700-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Guide Mono'; font-weight: 700;
+  src: url(fonts/jetbrains-mono-latin-ext-700-normal.woff2) format('woff2');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+
+:root {
+  --ink: #1d232b;
+  --muted: #5b6573;
+  --accent: #1f5f8b;
+  --accent-soft: #e8f1f8;
+  --rule: #d5dbe2;
+  --code-bg: #f5f7f9;
+  --fact: #2e7d32;
+  --infer: #b26a00;
+  --unknown: #6a1b9a;
+  --risk: #b3261e;
+}
+
+@page { size: A4; margin: 20mm 17mm 20mm 19mm; }
+
+html { font-size: 10pt; }
+body {
+  font-family: 'Guide Serif', 'DejaVu Serif', serif;
+  color: var(--ink);
+  line-height: 1.5;
+  margin: 0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  hyphens: manual;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Guide Sans', 'DejaVu Sans', sans-serif;
+  color: var(--ink);
+  line-height: 1.25;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+h1 {
+  font-size: 21pt;
+  color: var(--accent);
+  margin: 0 0 14pt 0;
+  padding-bottom: 6pt;
+  border-bottom: 2.5pt solid var(--accent);
+}
+section.chapter { break-before: page; page-break-before: always; }
+section.part-title { break-before: page; page-break-before: always; padding-top: 70mm; text-align: center; }
+section.part-title h1 { border: none; font-size: 26pt; }
+section.part-title p { color: var(--muted); font-size: 12pt; }
+h2 { font-size: 14.5pt; margin: 20pt 0 8pt; padding-bottom: 3pt; border-bottom: 0.75pt solid var(--rule); }
+h3 { font-size: 12pt; margin: 15pt 0 6pt; color: #263544; }
+h4 { font-size: 10.5pt; margin: 12pt 0 4pt; color: #34495e; }
+h5 { font-size: 10pt; margin: 10pt 0 4pt; }
+
+p { margin: 0 0 7pt 0; text-align: justify; orphans: 3; widows: 3; }
+ul, ol { margin: 0 0 8pt 0; padding-left: 18pt; }
+li { margin: 1.5pt 0; }
+li > p { margin: 0 0 3pt 0; }
+a { color: var(--accent); text-decoration: none; }
+strong { font-weight: 700; }
+hr { border: none; border-top: 0.75pt solid var(--rule); margin: 12pt 0; }
+
+code {
+  font-family: 'Guide Mono', 'DejaVu Sans Mono', monospace;
+  font-size: 8.4pt;
+  background: var(--code-bg);
+  padding: 0.5pt 2.5pt;
+  border-radius: 2pt;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+pre {
+  font-family: 'Guide Mono', 'DejaVu Sans Mono', monospace;
+  font-size: 7.9pt;
+  line-height: 1.38;
+  background: var(--code-bg);
+  border: 0.6pt solid #dde3e9;
+  border-left: 3pt solid var(--accent);
+  border-radius: 3pt;
+  padding: 6pt 8pt;
+  margin: 4pt 0 9pt 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+pre code { background: none; padding: 0; font-size: inherit; word-break: break-all; }
+div.sourceCode { margin: 0; }
+.src-ref {
+  font-family: 'Guide Mono', 'DejaVu Sans Mono', monospace;
+  font-size: 7.4pt;
+  color: var(--muted);
+  margin: 6pt 0 0 0;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+/* skylighting token classes */
+code span.kw, code span.cf { color: #7a1fa2; font-weight: 700; }
+code span.dt { color: #1f5f8b; }
+code span.dv, code span.bn, code span.fl { color: #0b7a75; }
+code span.st, code span.ch, code span.ss, code span.vs { color: #2e7d32; }
+code span.co, code span.cv, code span.do, code span.an { color: #7b8794; font-style: italic; }
+code span.fu { color: #8a3b00; }
+code span.at { color: #8a3b00; }
+code span.ot, code span.pp { color: #a0522d; }
+code span.op { color: #444; }
+code span.im { color: #6a1b9a; }
+code span.va { color: #1d232b; }
+code span.ex { color: #1f5f8b; }
+code span.er, code span.al { color: #b3261e; font-weight: 700; }
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 4pt 0 10pt 0;
+  font-size: 8.6pt;
+  line-height: 1.35;
+  page-break-inside: auto;
+}
+thead { display: table-header-group; }
+tr { break-inside: avoid; page-break-inside: avoid; }
+th {
+  font-family: 'Guide Sans', 'DejaVu Sans', sans-serif;
+  background: var(--accent-soft);
+  color: #17324a;
+  text-align: left;
+  font-weight: 700;
+}
+th, td { border: 0.6pt solid #cfd7df; padding: 3pt 5pt; vertical-align: top; }
+td code, th code { font-size: 7.6pt; }
+tbody tr:nth-child(even) td { background: #fafbfc; }
+
+blockquote {
+  margin: 6pt 0 10pt 0;
+  padding: 6pt 10pt;
+  background: #f7f9fb;
+  border-left: 3pt solid #9fb3c8;
+  color: #2f3b48;
+}
+blockquote p:last-child { margin-bottom: 0; }
+
+/* Etiketlər: fakt / nəticə / naməlum / risk */
+.tag { font-family: 'Guide Sans', 'DejaVu Sans', sans-serif; font-size: 7.4pt; font-weight: 700; padding: 0.5pt 4pt; border-radius: 2pt; color: #fff; white-space: nowrap; }
+.tag-fact { background: var(--fact); }
+.tag-infer { background: var(--infer); }
+.tag-unknown { background: var(--unknown); }
+.tag-risk { background: var(--risk); }
+
+div.callout { border: 0.8pt solid var(--rule); border-radius: 3pt; padding: 7pt 10pt; margin: 8pt 0 10pt; background: #fbfcfd; break-inside: avoid; }
+div.callout.warn { border-left: 4pt solid var(--risk); }
+div.callout.note { border-left: 4pt solid var(--accent); }
+div.callout.tip { border-left: 4pt solid var(--fact); }
+div.callout > p:first-child { margin-top: 0; }
+div.callout > p:last-child { margin-bottom: 0; }
+
+figure.diagram { margin: 8pt 0 12pt; text-align: center; break-inside: avoid; page-break-inside: avoid; }
+figure.diagram svg { max-width: 100%; height: auto; max-height: 215mm; }
+figure.diagram figcaption { font-family: 'Guide Sans', 'DejaVu Sans', sans-serif; font-size: 8pt; color: var(--muted); margin-top: 4pt; }
+
+/* Üz qabığı */
+section.cover { height: 250mm; display: flex; flex-direction: column; justify-content: center; text-align: left; padding: 0 6mm; }
+section.cover .kicker { font-family: 'Guide Sans', 'DejaVu Sans', sans-serif; color: var(--accent); letter-spacing: 1.5pt; text-transform: uppercase; font-size: 10pt; font-weight: 700; }
+section.cover h1.title { font-size: 30pt; border: none; margin: 10pt 0 8pt; color: var(--ink); }
+section.cover .subtitle { font-size: 14pt; color: var(--muted); margin-bottom: 26pt; }
+section.cover .meta { font-family: 'Guide Sans', 'DejaVu Sans', sans-serif; font-size: 9pt; color: var(--muted); border-top: 1pt solid var(--rule); padding-top: 10pt; }
+section.cover .meta p { text-align: left; margin: 2pt 0; }
+
+/* Mündəricat */
+nav.toc { break-before: page; page-break-before: always; }
+nav.toc h1 { margin-bottom: 10pt; }
+nav.toc ol { list-style: none; padding: 0; margin: 0; }
+nav.toc li { margin: 0; }
+nav.toc .toc-entry { display: flex; align-items: baseline; font-family: 'Guide Sans', 'DejaVu Sans', sans-serif; }
+nav.toc .toc-entry .t { flex: 0 1 auto; }
+nav.toc .toc-entry .dots { flex: 1 1 auto; border-bottom: 0.8pt dotted #9aa5b1; margin: 0 4pt; transform: translateY(-2.5pt); min-width: 10pt; }
+nav.toc .toc-entry .pg { flex: 0 0 auto; font-variant-numeric: tabular-nums; min-width: 16pt; text-align: right; }
+nav.toc .lvl-part { font-weight: 700; font-size: 10pt; color: var(--accent); margin: 9pt 0 2pt; text-transform: uppercase; letter-spacing: 0.6pt; }
+nav.toc .lvl1 .toc-entry { font-weight: 700; font-size: 9.6pt; margin-top: 4pt; }
+nav.toc .lvl2 .toc-entry { font-size: 8.6pt; padding-left: 14pt; color: #2f3b48; }
+
+.small { font-size: 8.5pt; color: var(--muted); }
+.nobreak { break-inside: avoid; page-break-inside: avoid; }

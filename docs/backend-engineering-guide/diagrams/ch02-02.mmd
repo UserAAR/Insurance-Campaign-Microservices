@@ -1,0 +1,52 @@
+%% caption: Sistem arxitekturası — yalnız kodda təsdiqlənmiş əlaqələr
+flowchart LR
+    Client([Klient / Postman / Swagger UI])
+    subgraph Edge[Kənar qat]
+        GW[api-gateway :8080]
+        RD[(Redis)]
+    end
+    subgraph Biz[Biznes servisləri]
+        AUTH[auth-service :8081]
+        CMP[campaign-service :8082 / gRPC :9090]
+        DSH[dashboard-service :8083]
+        LOG[log-service :8084]
+    end
+    subgraph Data[Data və mesajlaşma]
+        ADB[(PostgreSQL auth_db)]
+        CDB[(PostgreSQL campaign_db)]
+        K1[[Kafka: campaign-events]]
+        K2[[Kafka: log-events]]
+        K3[[Kafka: log-events.DLQ]]
+        ES[(Elasticsearch)]
+    end
+    subgraph Plat[Platforma]
+        EU[discovery-server Eureka :8761]
+        CS[config-server :8888]
+    end
+    Client -->|HTTP REST| GW
+    GW -->|rate limit Lua| RD
+    GW -->|lb://auth-service| AUTH
+    GW -->|lb://campaign-service| CMP
+    GW -->|lb://dashboard-service| DSH
+    GW -->|lb://log-service| LOG
+    AUTH --> ADB
+    AUTH -->|HTTP POST audit, async| LOG
+    CMP --> CDB
+    CMP -->|cache campaign-statistics| RD
+    CMP -->|status hadisəsi| K1
+    CMP -->|yavaş sorğu| K2
+    LOG -->|öz yavaş sorğuları| K2
+    DSH -->|gRPC unary, static ünvan| CMP
+    K2 -->|consumer group log-service| LOG
+    LOG -->|uğursuz qeyd| K3
+    LOG --> ES
+    GW -.->|registry fetch| EU
+    AUTH -.-> EU
+    CMP -.-> EU
+    DSH -.-> EU
+    LOG -.-> EU
+    AUTH -.->|optional config import| CS
+    CMP -.-> CS
+    DSH -.-> CS
+    LOG -.-> CS
+    GW -.-> CS

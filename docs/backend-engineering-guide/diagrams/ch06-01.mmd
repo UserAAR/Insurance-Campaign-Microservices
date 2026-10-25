@@ -1,0 +1,20 @@
+%% caption: create() daxilində SQL və Kafka əməliyyatlarının sırası (Hibernate davranışına əsaslanan NƏTİCƏ)
+sequenceDiagram
+    participant S as CampaignService.create
+    participant H as Hibernate session
+    participant DB as PostgreSQL
+    participant K as KafkaTemplate
+    participant C as Redis cache
+    S->>H: existsBy...StatusNot()
+    H->>DB: SELECT ... LIMIT 1
+    S->>H: saveAndFlush(entity) → merge
+    H->>DB: SELECT campaigns WHERE id=?
+    H->>DB: INSERT campaigns (flush)
+    S->>H: historyRepository.save → merge
+    H->>DB: SELECT campaign_status_histories WHERE id=?
+    S->>K: send(campaign-events, id, event)
+    Note over K: asinxron göndəriş, nəticə gözlənilmir
+    S-->>S: toDomain(saved)
+    H->>DB: INSERT campaign_status_histories (commit-də flush)
+    H->>DB: COMMIT
+    S->>C: @CacheEvict allEntries (sıra zəmanətli deyil)

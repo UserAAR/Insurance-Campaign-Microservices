@@ -1,0 +1,15 @@
+%% caption: Lövhədə çəkiləcək sadə sxem
+flowchart LR
+    C[Klient] --> G[Gateway<br/>rate limit + JWT]
+    G --> A[auth]
+    G --> CS[campaign]
+    G --> D[dashboard]
+    G --> L[log]
+    D -- gRPC --> CS
+    A -- "HTTP + R4j" --> L
+    CS -- Kafka --> L
+    CS --> P1[(PG)]
+    A --> P2[(PG)]
+    CS --> R[(Redis)]
+    G --> R
+    L --> E[(ES)]

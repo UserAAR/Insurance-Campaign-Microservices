@@ -1,0 +1,22 @@
+%% caption: Login axını: sinxron token cavabı və asinxron audit
+sequenceDiagram
+    autonumber
+    participant C as Klient
+    participant G as api-gateway
+    participant A as auth-service
+    participant DB as auth_db
+    participant L as log-service
+    participant ES as Elasticsearch
+    C->>G: POST /api/v1/auth/login
+    G->>G: rate limit (ip:...), açıq yol
+    G->>A: sorğunu ötür
+    A->>DB: SELECT app_users (username/email)
+    A->>A: parolun yoxlanması (DelegatingPasswordEncoder)
+    A-)A: @Async audit (LOGIN_SUCCESS)
+    A->>DB: INSERT refresh_tokens (hash), commit
+    A-->>G: 200 TokenResponse
+    G-->>C: 200 + X-RateLimit-* başlıqları
+    Note over A,L: arxa plan virtual thread
+    A->>L: POST /api/v1/logs/auth-audit (internal JWT)
+    L->>ES: index auth-audit-logs
+    L-->>A: 200

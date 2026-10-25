@@ -1,0 +1,16 @@
+%% caption: Transactional Outbox nümunəsi (illüstrativ, repozitoriyada yoxdur)
+sequenceDiagram
+    participant S as CampaignService
+    participant DB as PostgreSQL
+    participant R as Outbox relay (poller və ya Debezium CDC)
+    participant K as Kafka
+    S->>DB: BEGIN
+    S->>DB: INSERT campaigns / UPDATE status
+    S->>DB: INSERT outbox(event_id, aggregate_id, type, payload)
+    S->>DB: COMMIT (atomik — ya hamısı, ya heç biri)
+    loop periodik və ya WAL axını
+        R->>DB: SELECT göndərilməmiş outbox qeydləri
+        R->>K: send(key=aggregate_id, value=payload, header eventId)
+        K-->>R: ack (acks=all)
+        R->>DB: UPDATE outbox SET sent_at = now()
+    end

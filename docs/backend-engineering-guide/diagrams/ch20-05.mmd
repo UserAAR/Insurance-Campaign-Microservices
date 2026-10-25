@@ -1,0 +1,13 @@
+%% caption: Mövcud olmayan kampaniya üçün tarixçə — 404 əvəzinə 500
+sequenceDiagram
+    autonumber
+    participant C as Klient
+    participant D as dashboard-service
+    participant CS as campaign-service gRPC
+    C->>D: GET /dashboard/campaigns/{yox}/history
+    D->>CS: GetCampaignHistory(id)
+    CS->>CS: getHistory → ResourceNotFoundException
+    Note over CS: @GrpcAdvice yoxdur → Status.UNKNOWN
+    CS-->>D: UNKNOWN
+    D->>D: StatusRuntimeException → GlobalExceptionHandler catch-all
+    D-->>C: 500 INTERNAL_SERVER_ERROR (gözlənilən: 404)

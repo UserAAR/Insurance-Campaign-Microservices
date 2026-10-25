@@ -1,0 +1,26 @@
+%% caption: Observability axınları (docker-compose.yml və observability/ konfiqurasiyasına görə)
+flowchart LR
+    subgraph Apps[Spring Boot servisləri]
+        S1[api-gateway]
+        S2[auth / campaign / dashboard / log]
+    end
+    P[Prometheus :9091]
+    OC[OTel Collector :4317/:4318]
+    T[Tempo :3200]
+    F[(./logs/*.log)]
+    PT[Promtail :9080]
+    L[Loki :3100]
+    G[Grafana :3000]
+    P -->|scrape 15s /actuator/prometheus| S1
+    P -->|scrape| S2
+    S1 -->|OTLP/gRPC spans| OC
+    S2 -->|OTLP/gRPC spans| OC
+    OC -->|batch, otlp/tempo| T
+    T -->|span-metrics, service-graph remote_write| P
+    S1 -->|logging.file.name| F
+    S2 --> F
+    F --> PT
+    PT -->|push API| L
+    P --> G
+    T --> G
+    L --> G

@@ -1,0 +1,10 @@
+%% caption: JPA entity vəziyyətləri
+stateDiagram-v2
+    [*] --> Transient: new Entity()
+    Transient --> Managed: persist()
+    Transient --> Managed: merge() — nüsxə qaytarır
+    Managed --> Detached: tranzaksiya / session bitir
+    Detached --> Managed: merge() — nüsxə qaytarır
+    Managed --> Removed: remove()
+    Removed --> [*]: flush/commit
+    Managed --> Managed: sahə dəyişikliyi → dirty checking → UPDATE (flush)

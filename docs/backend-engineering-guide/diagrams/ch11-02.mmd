@@ -1,0 +1,26 @@
+%% caption: Repozitoriyadakı bütün Kafka axınları
+flowchart LR
+    subgraph CS[campaign-service]
+        SVC[CampaignService.publishStatusChange]
+        F1[SlowRequestLoggingFilter]
+    end
+    subgraph LS[log-service]
+        F2[SlowRequestLoggingFilter]
+        L1[SlowRequestLogConsumer.consume group=log-service]
+        L2[SlowRequestLogConsumer.consumeDlq group=log-service-dlq]
+        EH[DefaultErrorHandler FixedBackOff 1s x3 + DLPR]
+    end
+    T1[[campaign-events]]
+    T2[[log-events]]
+    T3[[log-events.DLQ]]
+    ES[(Elasticsearch slow-request-logs)]
+    X[Consumer yoxdur]
+    SVC -->|key=campaignId, CampaignStatusChangedEvent| T1
+    T1 -.-> X
+    F1 -->|key=request URI, SlowRequestLogEvent| T2
+    F2 -->|key=request URI| T2
+    T2 --> L1
+    L1 --> ES
+    L1 -->|istisna| EH
+    EH -->|4-cü uğursuzluqdan sonra| T3
+    T3 --> L2

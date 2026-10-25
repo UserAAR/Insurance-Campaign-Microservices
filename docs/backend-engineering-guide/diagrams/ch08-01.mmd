@@ -1,0 +1,8 @@
+%% caption: Layihənin istisna iyerarxiyası və HTTP xəritələnməsi
+flowchart TB
+    RE[RuntimeException] --> BE[BusinessException: errorCode]
+    BE --> DCE[DuplicateCampaignException: DUPLICATE_CAMPAIGN → 409]
+    BE --> ISTE[InvalidStatusTransitionException: INVALID_STATUS_TRANSITION → 409]
+    BE --> RNFE[ResourceNotFoundException: RESOURCE_NOT_FOUND → 404]
+    BE -. birbaşa istifadə .-> BRV[BUSINESS_RULE_VIOLATION → 409]
+    BE -. birbaşa istifadə .-> UNA[UNAUTHORIZED → 401]

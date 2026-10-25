@@ -1,0 +1,31 @@
+%% caption: auth_db sxemi (Liquibase changelog-undan bərpa edilib)
+erDiagram
+    app_users {
+        uuid id PK
+        varchar100 username "NOT NULL, UNIQUE"
+        varchar150 email "NULL, UNIQUE uk_app_users_email"
+        varchar150 full_name "NULL"
+        varchar255 password "NOT NULL"
+        varchar255 roles "NOT NULL, vergüllə"
+        varchar30 status "NOT NULL default ACTIVE"
+        timestamptz created_at "NOT NULL default now"
+        timestamptz updated_at "NOT NULL default now"
+    }
+    refresh_tokens {
+        uuid id PK
+        uuid user_id FK "NOT NULL, indeks"
+        varchar64 token_hash "NOT NULL, UNIQUE + indeks"
+        timestamptz expires_at "NOT NULL"
+        timestamptz created_at "NOT NULL"
+        timestamptz revoked_at "NULL"
+    }
+    password_reset_tokens {
+        uuid id PK
+        uuid user_id FK "NOT NULL, indeks"
+        varchar64 token_hash "NOT NULL, UNIQUE + indeks"
+        timestamptz expires_at "NOT NULL"
+        timestamptz created_at "NOT NULL"
+        timestamptz used_at "NULL"
+    }
+    app_users ||--o{ refresh_tokens : fk_refresh_tokens_user
+    app_users ||--o{ password_reset_tokens : fk_password_reset_tokens_user

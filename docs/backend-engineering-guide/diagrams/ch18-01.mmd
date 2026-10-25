@@ -1,0 +1,7 @@
+%% caption: GitHub Actions pipeline (ci-cd.yml)
+flowchart LR
+    T[push / pull_request → main] --> V[verify: JDK 25, mvn -B clean verify, JaCoCo]
+    V --> S[sonar: SonarQube konteyneri, token, mvn clean verify sonar:sonar, quality gate wait]
+    S --> D[docker: matrix 7 servis]
+    D -->|pull_request| B[yalnız build]
+    D -->|push main| P[Docker Hub login + push :latest]

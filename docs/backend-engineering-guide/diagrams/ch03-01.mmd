@@ -1,0 +1,23 @@
+%% caption: Maven modul asılılıqları (yalnız layihə daxili modullar)
+flowchart TB
+    common[common]
+    security[security]
+    grpc[grpc-contract]
+    gw[api-gateway]
+    auth[auth-service]
+    cmp[campaign-service]
+    dsh[dashboard-service]
+    log[log-service]
+    disc[discovery-server]
+    conf[config-server]
+    security --> common
+    auth --> common
+    auth --> security
+    cmp --> common
+    cmp --> security
+    cmp --> grpc
+    dsh --> common
+    dsh --> security
+    dsh --> grpc
+    log --> common
+    log --> security

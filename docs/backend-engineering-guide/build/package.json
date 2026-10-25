@@ -1,0 +1,12 @@
+{
+  "name": "insurance-campaign-backend-guide-build",
+  "private": true,
+  "description": "PDF build tooling for the backend engineering guide (Mermaid rendering). Playwright/Chromium is expected to be installed globally.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "mermaid": "11.12.0"
+  }
+}

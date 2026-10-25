@@ -1,0 +1,21 @@
+%% caption: campaign_db sxemi (Liquibase changelog-undan bərpa edilib)
+erDiagram
+    campaigns {
+        uuid id PK
+        varchar50 title "NOT NULL"
+        varchar200 description "NOT NULL"
+        varchar30 category "NOT NULL"
+        varchar30 status "NOT NULL"
+        uuid duplicate_of "NULL, istifadə olunmur"
+        timestamptz created_at "NOT NULL"
+        timestamptz updated_at "NOT NULL"
+    }
+    campaign_status_histories {
+        uuid id PK
+        uuid campaign_id FK "NOT NULL, indekssiz"
+        varchar30 previous_status "NULL"
+        varchar30 new_status "NOT NULL"
+        varchar200 reason "NOT NULL"
+        timestamptz changed_at "NOT NULL"
+    }
+    campaigns ||--o{ campaign_status_histories : "fk_campaign_status_history_campaign"

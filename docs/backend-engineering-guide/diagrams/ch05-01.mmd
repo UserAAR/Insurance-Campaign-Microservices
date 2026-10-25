@@ -1,0 +1,16 @@
+%% caption: Servlet əsaslı servisdə HTTP sorğusunun icra yolu (campaign-service)
+flowchart TB
+    A[Tomcat: virtual thread] --> B[Filtr zənciri: observation, Spring Security FilterChainProxy]
+    B --> C[JwtAuthenticationFilter: SecurityContext]
+    C --> D[AuthorizationFilter: anyRequest authenticated]
+    D --> E[SlowRequestLoggingFilter: vaxt ölçümü başlayır]
+    E --> F[DispatcherServlet]
+    F --> G[HandlerMapping: yol və metod]
+    G --> H[Argument resolver-lər: RequestBody, PathVariable, Pageable]
+    H --> I[Validation: @Valid]
+    I --> J[Method security proxy: @PreAuthorize]
+    J --> K[Controller metodu]
+    K --> L[Servis proxy: @Transactional, @Cacheable]
+    L --> M[Repository: JPA, PostgreSQL]
+    K --> N[HttpMessageConverter: Jackson 3 JSON]
+    F -. istisna .-> X[ExceptionHandlerExceptionResolver: GlobalExceptionHandler]

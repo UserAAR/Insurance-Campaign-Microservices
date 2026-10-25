@@ -1,0 +1,28 @@
+%% caption: Gateway-də sorğunun filtr sırası və rate limit qərarı
+sequenceDiagram
+    autonumber
+    participant C as Klient
+    participant EF as GatewayRateLimitErrorResponseFilter (HIGHEST_PRECEDENCE)
+    participant RL as RequestRateLimiter (default filter)
+    participant KR as KeyResolver
+    participant R as Redis (Lua)
+    participant JF as GatewayJwtAuthenticationFilter (order 100)
+    participant S as Downstream servis
+    C->>EF: sorğu
+    EF->>RL: dekorasiya olunmuş cavabla davam
+    RL->>KR: açar
+    KR-->>RL: user:admin və ya ip:1.2.3.4
+    RL->>R: EVALSHA request_rate_limiter (route, açar)
+    alt icazə var
+        R-->>RL: [1, qalan token]
+        RL->>JF: davam
+        JF->>S: JWT etibarlıdırsa marşrutlaşdır
+        S-->>C: cavab + X-RateLimit-* başlıqları
+    else limit aşılıb
+        R-->>RL: [0, qalan token]
+        RL->>EF: status 429, setComplete()
+        EF-->>C: 429 JSON + Retry-After: 5
+    else Redis xətası
+        R--xRL: xəta
+        RL->>JF: fail-open: icazə
+    end

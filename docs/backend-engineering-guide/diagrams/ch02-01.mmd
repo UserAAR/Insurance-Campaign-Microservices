@@ -1,0 +1,8 @@
+%% caption: Kampaniya status maşını (DUPLICATE statusu enum-da var, lakin heç bir axın onu təyin etmir)
+stateDiagram-v2
+    [*] --> ACTIVE: create (category = LIFE)
+    [*] --> PENDING_APPROVAL: create (TSS, OSS, OTHER)
+    PENDING_APPROVAL --> ACTIVE: approve
+    PENDING_APPROVAL --> DEACTIVE: deactivate
+    ACTIVE --> DEACTIVE: deactivate
+    DEACTIVE --> [*]

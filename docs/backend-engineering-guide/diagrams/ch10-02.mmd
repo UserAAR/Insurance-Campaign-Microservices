@@ -1,0 +1,12 @@
+%% caption: Servlet servisində Spring Security filtr zənciri (layihə konfiqurasiyasına görə sadələşdirilmiş)
+flowchart TB
+    A[Tomcat] --> B[DelegatingFilterProxy springSecurityFilterChain]
+    B --> C[FilterChainProxy]
+    C --> D[SecurityContextHolderFilter]
+    D --> E[HeaderWriterFilter: təhlükəsizlik başlıqları]
+    E --> F[JwtAuthenticationFilter: Bearer → SecurityContext]
+    F --> G[UsernamePasswordAuthenticationFilter: bu layihədə form login yoxdur]
+    G --> H[AnonymousAuthenticationFilter]
+    H --> I[ExceptionTranslationFilter: 401 / 403 handler-ləri]
+    I --> J[AuthorizationFilter: permitAll və ya authenticated]
+    J --> K[DispatcherServlet → @PreAuthorize → controller]

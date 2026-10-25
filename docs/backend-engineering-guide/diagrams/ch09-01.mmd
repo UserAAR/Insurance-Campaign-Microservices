@@ -1,0 +1,26 @@
+%% caption: Login axını (gateway → auth-service → auth_db, asinxron audit log-service-ə)
+sequenceDiagram
+    autonumber
+    participant C as Klient
+    participant G as api-gateway
+    participant R as Redis
+    participant A as auth-service
+    participant DB as auth_db
+    participant V as virtual thread (@Async)
+    participant L as log-service
+    participant ES as Elasticsearch
+    C->>G: POST /api/v1/auth/login {usernameOrEmail, password}
+    G->>R: rate limit (açar ip:...)
+    R-->>G: icazə
+    Note over G: /api/v1/auth açıq yoldur, JWT yoxlanmır
+    G->>A: lb://auth-service
+    A->>A: SecurityFilterChain (permitAll), @Valid
+    A->>DB: SELECT app_users WHERE username/email
+    A->>A: bcrypt matches
+    A->>V: publishLoginSuccessAuditAsync (dərhal qayıdır)
+    A->>A: JWT RS256 imzala (private key)
+    A->>DB: SELECT + INSERT refresh_tokens (merge, commit)
+    A-->>G: 200 {accessToken, refreshToken, ...}
+    G-->>C: 200
+    V->>L: POST /api/v1/logs/auth-audit (Bearer daxili JWT, Retry/CB/Bulkhead)
+    L->>ES: index auth-audit-logs

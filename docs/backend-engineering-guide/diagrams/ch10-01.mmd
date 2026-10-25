@@ -1,0 +1,13 @@
+%% caption: RSA açarlarının paylanması (repozitoriyadakı faktiki fayllar)
+flowchart LR
+    PK[auth-service/src/main/resources/keys/private.pem]
+    PUB1[auth-service/.../keys/public.pem]
+    PUB2[security/src/main/resources/keys/public.pem]
+    PUB3[api-gateway/src/main/resources/keys/public.pem]
+    AUTH[auth-service: imzalayır və yoxlayır]
+    SVC[campaign, dashboard, log: yoxlayır]
+    GW[api-gateway: yoxlayır]
+    PK --> AUTH
+    PUB1 --> AUTH
+    PUB2 -->|security jar ilə classpath-də| SVC
+    PUB3 --> GW

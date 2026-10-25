@@ -1,0 +1,11 @@
+%% caption: Circuit breaker vəziyyətləri və layihədəki parametrlər
+stateDiagram-v2
+    [*] --> CLOSED
+    CLOSED --> OPEN: son 10 çağırışda (min. 5) uğursuzluq ≥ 50%
+    OPEN --> HALF_OPEN: 30 s keçdikdən sonra növbəti çağırış
+    HALF_OPEN --> CLOSED: 3 sınaq çağırışında uğursuzluq < 50%
+    HALF_OPEN --> OPEN: 3 sınaq çağırışında uğursuzluq ≥ 50%
+    note right of OPEN
+        Çağırışlar dərhal CallNotPermittedException
+        ilə rədd edilir (log-service-ə getmir)
+    end note

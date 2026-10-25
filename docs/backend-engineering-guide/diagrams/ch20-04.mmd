@@ -1,0 +1,23 @@
+%% caption: Dashboard statistikası: REST → gRPC → Redis cache → PostgreSQL
+sequenceDiagram
+    autonumber
+    participant C as Admin klient
+    participant G as api-gateway
+    participant D as dashboard-service
+    participant CS as campaign-service (gRPC 9090)
+    participant R as Redis
+    participant DB as campaign_db
+    C->>G: GET /api/v1/dashboard/classifieds/statistics
+    G->>D: rate limit + JWT, lb://
+    D->>D: JWT + @PreAuthorize ADMIN
+    D->>CS: GetCampaignStatistics (plaintext, deadline yoxdur)
+    CS->>R: GET campaign-statistics::SimpleKey []
+    alt cache hit
+        R-->>CS: Map
+    else cache miss
+        CS->>DB: SELECT status, count(*) GROUP BY status
+        CS->>R: SET (TTL yoxdur)
+    end
+    CS-->>D: CampaignStatisticsResponse
+    D->>D: DUPLICATE-i süz, 0 ilə doldur
+    D-->>C: 200 {PENDING_APPROVAL, ACTIVE, DEACTIVE}

@@ -1,0 +1,18 @@
+%% caption: Eureka qeydiyyatı və gateway-də lb:// həlli (standart intervallar)
+sequenceDiagram
+    autonumber
+    participant S as campaign-service
+    participant E as Eureka Server (8761)
+    participant G as api-gateway
+    participant LB as LoadBalancer
+    S->>E: register (ad, IP, port, UP)
+    loop hər 30 s
+        S->>E: heartbeat (renew)
+    end
+    loop hər 30 s
+        G->>E: reyestri yüklə (delta)
+    end
+    G->>LB: lb://campaign-service
+    LB->>LB: lokal cache-dən instans seç (round-robin)
+    LB-->>G: http://IP:8082
+    Note over E: heartbeat 90 s gəlməsə instans silinir

@@ -1,0 +1,19 @@
+%% caption: Kafka-nın əsas anlayışları: mövzu, partisiyalar, consumer group-lar
+flowchart LR
+    P1[Producer A] -->|key=k1| T0
+    P2[Producer B] -->|key=k2| T1
+    subgraph Topic[Mövzu: campaign-events]
+        T0[Partisiya 0: offset 0,1,2,...]
+        T1[Partisiya 1: offset 0,1,2,...]
+    end
+    subgraph G1[Consumer group: analytics]
+        C1[Consumer 1]
+        C2[Consumer 2]
+    end
+    subgraph G2[Consumer group: notifications]
+        C3[Consumer 3]
+    end
+    T0 --> C1
+    T1 --> C2
+    T0 --> C3
+    T1 --> C3

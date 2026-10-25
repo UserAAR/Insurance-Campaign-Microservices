@@ -1,0 +1,17 @@
+%% caption: CampaignController-dən CampaignService.create çağırışının proxy zənciri (sadələşdirilmiş)
+sequenceDiagram
+    participant C as CampaignController
+    participant P as CampaignService proxy (CGLIB)
+    participant CI as CacheInterceptor
+    participant TI as TransactionInterceptor
+    participant S as CampaignService (hədəf)
+    C->>P: create(request)
+    P->>CI: advisor zənciri
+    CI->>TI: davam et
+    TI->>TI: tranzaksiyanı başlat
+    TI->>S: create(request)
+    S-->>TI: Campaign
+    TI->>TI: commit (və ya rollback)
+    TI-->>CI: nəticə
+    CI->>CI: @CacheEvict(allEntries) — metod uğurla bitdikdən sonra
+    CI-->>C: Campaign

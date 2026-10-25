@@ -1,0 +1,20 @@
+%% caption: Təklif olunan hədəf arxitektura (illüstrativ)
+flowchart TB
+    U[Klientlər] --> GW[API Gateway<br/>rate limit, JWT, CORS]
+    IDP[Identity Provider<br/>OIDC: Keycloak / bulud IdP] -. JWKS .-> GW
+    U -. login .-> IDP
+    GW --> CS[campaign-service<br/>resource server]
+    GW --> RS[reporting-service<br/>oxu modeli]
+    GW --> AS[audit-service<br/>axtarış API]
+    CS --> CDB[(campaign_db<br/>+ outbox)]
+    CS -- "outbox relay" --> K[(Kafka<br/>campaign.status-changed.v1)]
+    K --> RS
+    RS --> RDB[(reporting_db / Redis)]
+    IDP -- "audit hadisələri" --> K2[(Kafka<br/>auth.audit.v1)]
+    K --> AS
+    K2 --> AS
+    AS --> ES[(Elasticsearch<br/>ILM ilə)]
+    CS & RS & AS & GW -- OTLP --> OT[OTel Collector]
+    OT --> TM[Tempo]
+    OT --> PR[Prometheus]
+    OT --> LK[Loki]
