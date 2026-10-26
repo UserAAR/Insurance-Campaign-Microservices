@@ -21,7 +21,7 @@
     "pdfName": "Mikroservislerin-Anatomiyasi-AAR.pdf",
     "coverPng": "Mikroservislerin-Anatomiyasi-AAR-cover.png",
     "colophon": [
-      "Üz qabığı haqqında: üz qabığında XIX əsr elmi atlaslarının üslubunda çəkilmiş bal arısı (Apis mellifera) var. Arı koloniyası mikroservis sisteminin metaforasıdır — hər hüceyrə kiçik və müstəqildir, bütöv isə aydın kontraktlar, siqnallar və bölüşdürülmüş məsuliyyət sayəsində işləyir. Lövhədəki A–F göstəriciləri sistemin qatlarına uyğundur: bığcıqlar — API Gateway, gözlər — təhlükəsizlik, döş — servislər, qanadlar — inteqrasiya, qarın — data, tüklər — müşahidə. Bütün qrafika vektordur və kitabın build skripti ilə koddan qurulur.",
+      "Üz qabığı haqqında: üz qabığında XIX əsr elmi atlaslarının üslubunda çəkilmiş adi ahtapot (Octopus vulgaris Cuvier, 1797) var. Ahtapotun neyronlarının təxminən üçdə ikisi qollarındadır — hər qol yerli qərar verir, mərkəzi beyin istiqamət verir; bu, gateway və müstəqil servislərdən ibarət mikroservis sisteminin canlı analoqudur. Lövhədəki A–H göstəriciləri sistemin qatlarına uyğundur: beyin — API Gateway, gözlər — təhlükəsizlik, qollar — servislər, sinir halqası — hadisələr (Kafka), vantuzlar — kontraktlar, üç ürək — dayanıqlıq, xromatoforlar — müşahidə, mantiya — data. Bütün qrafika vektordur və kitabın build skripti ilə koddan qurulur.",
       "Kitab Markdown mənbələrindən pandoc və Chromium ilə yığılıb. Mətn Noto Serif və Noto Sans, kod JetBrains Mono şrifti ilə (SIL Open Font License) verilib; diaqramlar Mermaid ilə çəkilib.",
       "Kitabdakı kod nümunələri UserAAR/Insurance-Campaign-Microservices repozitoriyasından götürülüb və hər biri fayl:sətir istinadı ilə yoxlanıla bilər. Tövsiyələri öz mühitinizdə tətbiq etməzdən əvvəl yoxlayın."
     ],

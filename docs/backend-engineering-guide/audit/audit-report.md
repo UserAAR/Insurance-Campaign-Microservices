@@ -93,7 +93,7 @@ yalançı siqnallardır.
 
 **Avtomatik:** `build/audit_pdf.py` — mündəricatdakı 353 başlığın hər birinin göstərilən səhifədə mətn kimi tapılması,
 üz qabığından sonrakı hər səhifədə `N / 260` altbilgisi və PDF səhifə etiketlərinin (`Üz qabığı`, `1`, `2`, …) uyğunluğu,
-boş səhifələrin olmaması, şriftlərin PDF-ə daxil edilməsi (28 şrift; Type3 qlifləri
+boş səhifələrin olmaması, şriftlərin PDF-ə daxil edilməsi (29 şrift; Type3 qlifləri
 daxili təsvir olunur), mətn qatında U+FFFD olmaması və Azərbaycan hərflərinin (ə, ğ, ı, İ, ö, ş, ç, ü) mövcudluğu.
 Nəticə `audit/pdf-audit.json`-dadır.
 

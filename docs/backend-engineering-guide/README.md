@@ -26,8 +26,8 @@ mənbə kodu dəyişdirilməyib.
 | `diagrams/rendered/*.svg` | Render olunmuş diaqramlar (keş; mənbə dəyişəndə yenilənir) |
 | `audit/audit-report.md` | Audit A/B/C hesabatı, düzəlişlər və məhdudiyyətlər |
 | `audit/verify-refs.json`, `audit/pdf-audit.json` | Avtomatik yoxlamaların maşın oxunan nəticələri |
-| `cover/cover.svg` | Üz qabığı (elmi qravüra üslubunda bal arısı, pətək; koddan qurulur) |
-| `build/` | Build və yoxlama skriptləri, stil, şriftlər; `cover.py`, `render_cover.mjs`, `assemble.py` üz qabığı üçündür |
+| `cover/cover.svg` | Üz qabığı (elmi qravüra üslubunda ahtapot, A–H anatomik legenda; `build/cover.py` + `build/cover_art.py` ilə koddan qurulur) |
+| `build/` | Build və yoxlama skriptləri, stil, şriftlər; `cover.py`, `cover_art.py`, `render_cover.mjs`, `assemble.py` üz qabığı üçündür |
 
 ## Tələblər
 

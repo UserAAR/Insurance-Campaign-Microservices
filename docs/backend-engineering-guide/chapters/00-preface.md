@@ -16,9 +16,10 @@ campaign, dashboard və log servislərini, onları birləşdirən REST, gRPC və
 Elasticsearch qatlarını bir-bir açıram. Hər hissədə əvvəlcə texnologiyanın özünü — problem, nəzəriyyə, daxili
 mexanizm — izah edirəm, sonra onun bu repozitoriyada necə qurulduğunu kodun konkret sətirləri ilə göstərirəm.
 
-Üz qabığındakı bal arısı da bu fikrin simvoludur. Arı koloniyası mikroservis sisteminin ən yaxşı metaforalarından
-biridir: hər hüceyrə kiçik və müstəqildir, amma bütöv sistem yalnız aydın kontraktlar, siqnallar və bölüşdürülmüş
-məsuliyyət sayəsində yaşayır.
+Üz qabığındakı ahtapot da bu fikrin simvoludur. Ahtapotun neyronlarının təxminən üçdə ikisi qollarındadır: hər
+qol yerli qərar verir, mərkəzi beyin isə yalnız istiqaməti müəyyən edir — müstəqil servislər və onları birləşdirən
+gateway kimi. Üç ürəyi dayanıqlığı, rəng hüceyrələri siqnalları və müşahidəni, vantuzları isə servislərin bir-biri
+ilə təmas nöqtələrini — kontraktları xatırladır. Bu kitab da sistemə məhz belə baxır: bir orqanizm kimi.
 
 ## Bu kitabda nəyə söz verirəm
 
