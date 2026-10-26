@@ -262,7 +262,25 @@ kifayət deyil — kompromis sayılmalı və dəyişdirilməlidir.
 **Şəbəkə.** Xaricə yalnız gateway açılmalıdır; gRPC 9090 (F04), DB, Redis, Kafka, ES, actuator portları daxili şəbəkədə
 qalmalıdır.
 
-## 23.8 Müsahibə sualları
+## 23.8 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★★ — Game day: Kafka.** campaign-service-ə dövri GET sorğuları göndərən döngü işə salın, Kafka-nı iki dəqiqəlik
+dayandırın, sonra qaytarın. **Yoxlama:** simptomları, hansı alert-lərin işə düşəcəyini və bərpa addımlarını yazın; P4
+playbook-u ilə müqayisə edin.
+
+**T2 ★★ — Alert-ləri işə salın.** 23.2-dəki qaydaları `observability/prometheus/alerts.yml` faylına yazın,
+`prometheus.yml`-də `rule_files` ilə qoşun və Compose-da faylı konteynerə bağlayın. **Yoxlama:** Prometheus UI → Alerts
+səhifəsində qaydalar görünür; log-service-i dayandıranda `AuditCircuitOpen` işə düşür.
+
+**T3 ★★★ — Açar rotasiyası təlimi.** Lokal olaraq yeni RSA cütü yaradın
+(`openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out private.pem`, sonra
+`openssl pkey -in private.pem -pubout -out public.pem`), bütün servislərdə `JWT_*_KEY_LOCATION`-u yeniləyib yenidən
+başladın. **Yoxlama:** köhnə token-lər rədd olunur, yeni login işləyir; addımların müddətini runbook-a yazın. Yeni açarı
+repozitoriyaya commit etməyin.
+
+## 23.9 Müsahibə sualları
 
 **S1. İstehsalda bütün sorğular birdən yavaşladı. Addımlarınız?**
 Cavab: RED metriklərində hansı servis və endpoint; ortaq asılılıq (DB hovuzu, Kafka, Redis); trace-də ən uzun span;
@@ -284,7 +302,7 @@ istisnaları uğursuzluq sayması (`record-exceptions` — burada bütün `Runti
 **S5. JWT açarını fasiləsiz necə dəyişərdiniz?**
 Cavab: JWKS endpoint-i, `kid` başlığı, yoxlayıcılarda köhnə və yeni açarın paralel qəbulu, sonra köhnə açarın silinməsi.
 
-## 23.9 Xülasə
+## 23.10 Xülasə
 
 - Compose-da tətbiq servislərinin healthcheck-i yoxdur; actuator açıqdır.
 - Əsas siqnallar: RED metrikləri, Hikari, circuit breaker vəziyyəti, consumer lag; producer və ES metrikləri yoxdur.

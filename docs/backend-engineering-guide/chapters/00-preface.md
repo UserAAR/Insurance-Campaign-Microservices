@@ -31,8 +31,10 @@ məsuliyyət sayəsində yaşayır.
   qeydiyyat zamanı klientdən qəbul edilməsi, parol bərpası token-inin cavabda qaytarılması, Kafka göndərişinin DB
   tranzaksiyasının içində olması, gRPC çağırışlarında deadline-ın olmaması kimi problemləri açıq yazıram və hər biri
   üçün necə düzəldəcəyimi göstərirəm. Real mühəndislik mükəmməl kod deyil — öz qərarlarının qiymətini bilməkdir.
-- **Öyrəndiyiniz hər şeyi tətbiq edə biləcəksiniz.** Kitabın sonunda eyni sistemi sıfırdan necə dizayn edərdim,
-  istehsalda onu necə işlədərdim və müsahibədə necə izah edərdim — bunların hamısını ayrıca fəsillərdə yazmışam.
+- **Öyrəndiyiniz hər şeyi tətbiq edə biləcəksiniz.** Hər fəslin sonunda yoxlama meyarı olan praktiki tapşırıqlar var:
+  bug-ı reproduksiya etmək, testlə sənədləşdirmək, düzəltmək, sistemi qəsdən sındırıb nəticəni ölçmək. Kitabın
+  sonunda isə eyni sistemi sıfırdan necə dizayn edərdim, istehsalda onu necə işlədərdim və müsahibədə necə izah
+  edərdim — bunların hamısını ayrıca fəsillərdə yazmışam.
 
 ## Kim üçün yazmışam
 

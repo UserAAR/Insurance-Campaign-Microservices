@@ -340,7 +340,27 @@ daxilində), NGINX/Envoy/API Management səviyyəsində limitlər, WAF. Çoxqatl
 limitləri (etibarlı XFF ilə), gateway-də istifadəçi/marşrut limitləri, servisdə biznes limitləri (məs. "5 uğursuz
 login → hesab müvəqqəti kilidi").
 
-## 15.10 Müsahibə sualları
+## 15.10 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★ — Cache-i canlı izləyin.** `docker exec -it redis redis-cli MONITOR` açıq ikən statistikanı iki dəfə oxuyun,
+sonra kampaniya yaradın. **Gözlənilən nəticə:** birinci oxuma `GET` + `SET`, ikinci yalnız `GET`, yaratma isə açarı
+silir.
+
+**T2 ★ — 429-u tutun.** Eyni token ilə gateway-ə ardıcıl iki sorğu göndərin. **Yoxlama:** ikinci cavab 429 və
+`Retry-After: 5`; `redis-cli --scan --pattern 'request_rate_limiter*'` ilə açarları və onların `TTL`-ini görün.
+
+**T3 ★★ — TTL əlavə edin.** `spring.cache.redis.time-to-live: 5m`. **Yoxlama:** statistika oxunduqdan sonra
+`TTL "campaign-statistics::SimpleKey []"` təxminən 300 qaytarır.
+
+**T4 ★★ — Fail-open cache.** `CachingConfigurer` ilə xətaları loglayıb davam edən `CacheErrorHandler` yazın. **Yoxlama:**
+Redis dayananda statistika 500 deyil, DB-dən gəlir.
+
+**T5 ★★★ — XFF hiyləsi (F05).** Token olmadan hər sorğuda fərqli `X-Forwarded-For` göndərin. **Gözlənilən nəticə:**
+heç vaxt 429 gəlmir. Düzəliş: yalnız etibarlı proxy-dən gələn başlığa inanmaq; dəyişikliyi test ilə təsdiqləyin.
+
+## 15.11 Müsahibə sualları
 
 **S1. Token bucket alqoritmini izah edin; `replenishRate=1, burstCapacity=5, requestedTokens=5` nə deməkdir?**
 Cavab: Vedrədə ən çox `burstCapacity` token olur, saniyədə `replenishRate` token əlavə olunur, hər sorğu
@@ -367,7 +387,7 @@ Cavab: Bir neçə instans eyni dəyəri görməli və eviction qlobal olmalıdı
 instanslar arasında paylaşılması faydalıdırsa. Lokal cache daha sürətlidir, lakin instanslar arası ardıcıllıq problemi
 var. İki səviyyəli (L1 lokal + L2 Redis) hibrid də mümkündür.
 
-## 15.11 Xülasə
+## 15.12 Xülasə
 
 - campaign-service statistika üçün cache-aside modelini Spring Cache + Redis ilə həyata keçirir; eviction hər yazıda
   qlobaldır, lakin TTL yoxdur, sıra və xəta emalı riskləri var.

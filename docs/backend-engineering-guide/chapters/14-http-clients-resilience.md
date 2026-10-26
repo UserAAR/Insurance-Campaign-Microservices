@@ -342,7 +342,26 @@ Test strategiyası: **WireMock** (və ya MockWebServer) ilə real HTTP serverini
 — 503 cavablarında 3 cəhd edildiyini, 5 uğursuzluqdan sonra CB-nin açıldığını (`CircuitBreakerRegistry` ilə vəziyyəti
 yoxlamaq), timeout-ları və başlıqda `Authorization`-un olduğunu yoxlamaq.
 
-## 14.10 Müsahibə sualları
+## 14.10 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★ — Circuit breaker-i hərəkətdə görün.** log-service-i dayandırın, auth-service-ə birbaşa (8081) bir neçə dəfə
+login olun və auth loglarına baxın; `/actuator/metrics/resilience4j.circuitbreaker.state` ilə vəziyyəti yoxlayın.
+**Gözlənilən nəticə:** əvvəlcə "could not be sent" xəbərdarlıqları, minimum çağırış sayına çatandan sonra "circuit
+breaker is open"; 30 saniyədən sonra half-open.
+
+**T2 ★★ — Timeout-lar.** `spring.http.serviceclient.log-service.connect-timeout: 1s` və `read-timeout: 2s` əlavə edin
+(xassə adları Boot 4.1 mənbəsindən yoxlanılıb, 22.6). `docker compose pause log-service` ilə sınayın. **Yoxlama:**
+login təsirlənmir, audit thread-i iki saniyədən sonra azad olur.
+
+**T3 ★★ — Retry-ı seçici edin.** `retry-exceptions`-u `ResourceAccessException` və `HttpServerErrorException` ilə
+məhdudlaşdırın, 4xx-i retry etməyin. **Yoxlama:** log-service 403 qaytaranda (məs. səhv rol) yalnız bir cəhd edilir.
+
+**T4 ★★ — Bulkhead.** 50 paralel login göndərin (məs. `xargs -P 50` ilə `curl`). **Gözlənilən nəticə:** eyni anda 10-dan
+çox audit çağırışı olanda "bulkhead is full" xəbərdarlıqları görünür, login-lər isə uğurlu qalır.
+
+## 14.11 Müsahibə sualları
 
 **S1. Retry və circuit breaker birlikdə istifadə olunduqda sıra niyə vacibdir?**
 Cavab: Retry xaricdədirsə, hər cəhd CB-dən keçir və sayılır; CB açılanda retry dayanmalıdır (CallNotPermitted ignore).
@@ -372,7 +391,7 @@ təcrübəsi, uzunmüddətli dəstək.
 Cavab: HTTP + async at-most-once-dır: alıcı düşəndə və ya proses dayananda audit itir. Outbox + Kafka davamlıdır və
 at-least-once-dır: audit DB tranzaksiyası ilə atomik yazılır, sonra çatdırılır; consumer idempotent olmalıdır.
 
-## 14.11 Xülasə
+## 14.12 Xülasə
 
 - auth → log çağırışı Spring 7-nin HTTP Interface + HTTP Service registry mexanizmi ilə deklarativ yazılıb; daxili JWT
   qrup konfiqurasiyası ilə əlavə olunur.

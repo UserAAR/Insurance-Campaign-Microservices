@@ -430,7 +430,25 @@ unit test ilə asanlıqla yoxlanılan formadadır.
 | Redis əlçatmaz | `@CacheEvict` / `@Cacheable` | [NƏTİCƏ] Standart `CacheErrorHandler` xətanı yenidən atır → 500; `create`-də commit artıq baş vermiş ola bilər | Dublikat qaydası sayəsində təkrar 409 verə bilər |
 | Paralel approve/deactivate | Servis | Hər ikisi uğurlu (F37) | — |
 
-## 6.11 Müsahibə sualları
+## 6.11 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★★ — Keçid cədvəlini testlə örtün.** 20.4-dəki cədvəlin hər xanası (4 status × 2 əməliyyat) üçün
+`CampaignServiceTest`-ə test yazın. **Yoxlama:** səkkiz test; hər uğursuz keçid düzgün istisnanı atır.
+
+**T2 ★★ — Qaydaları enum-a köçürün.** `CampaignStatus.canTransitionTo` metodunu yazın (21.9-dakı nümunə) və
+`approve`/`deactivate`-i onunla sadələşdirin. **Yoxlama:** T1-dəki testlər dəyişmədən yaşıl qalır.
+
+**T3 ★★ — F36-nı reproduksiya edin.** İnteqrasiya testində kampaniyanı approve edin, cavabdakı `updatedAt`-i sonrakı
+`GET` cavabı ilə müqayisə edin. **Gözlənilən nəticə:** dəyərlər fərqlidir. Sonra düzəldin (`saveAndFlush` və ya
+vaxtı `Clock` ilə servisdə təyin etmək) və testin keçdiyini göstərin.
+
+**T4 ★★★ — Optimistik kilid (F37).** Liquibase changeset ilə `version` sütunu, entity-də `@Version`, handler-də
+`ObjectOptimisticLockingFailureException → 409`. İki thread eyni anda approve və deactivate etsin. **Yoxlama:**
+əməliyyatlardan biri 409 alır, tarixçədə yalnız bir keçid qalır.
+
+## 6.12 Müsahibə sualları
 
 **S1. Dublikat yoxlamasını niyə həm tətbiqdə, həm DB-də edirsiniz?**
 Cavab: Tətbiq yoxlaması aydın xəta mesajı və DB-yə yazmadan rədd etmək üçündür, lakin iki paralel sorğu arasında
@@ -455,7 +473,7 @@ olar. `@Version` ilə optimistik kilid (konflikt nadirdirsə ən yaxşı seçim)
 Cavab: Servisdə — sadə, lakin qayda yalnız həmin servis metodları ilə qorunur (anemik model). Entity/enum-da — qayda
 invariant kimi obyektin özündədir, hər çağırış yolu onu keçmək məcburiyyətindədir və asan unit test olunur.
 
-## 6.12 Xülasə
+## 6.13 Xülasə
 
 - campaign-service kampaniya qaydalarının yeganə sahibidir; REST və gRPC eyni servis qatından istifadə edir.
 - Yaratma: tətbiq səviyyəli dublikat yoxlaması + DB partial unique indeks; `saveAndFlush` + `catch`.

@@ -385,7 +385,56 @@ vəziyyətsizdir (stateless): sahələr yalnız `final` asılılıqlar və konfi
    ilə açıq təyin edin (`@EnableTransactionManagement(order = ...)`, `@EnableCaching(order = ...)`).
 5. Bir-birindən müstəqil narahatlıqları ayrı şərtlərə bağlayın (`@EnableAsync` virtual thread şərtinə bağlı olmasın).
 
-## 4.12 Müsahibə sualları
+## 4.12 Alternativlər
+
+| Mövzu | Layihədəki seçim | Alternativ | Nə vaxt alternativi seçərdim |
+|---|---|---|---|
+| DI konteyneri | Spring (runtime refleksiya, proxy-lər) | Quarkus / Micronaut (kompilyasiya zamanı DI), Dagger, Guice | Çox sürətli başlanğıc və aşağı yaddaş lazım olanda (serverless, CLI); GraalVM native image |
+| Konfiqurasiya | `@ConfigurationProperties` record-lar + `@Value` | Yalnız `@ConfigurationProperties` (validasiya ilə `@Validated`) | Həmişə: `@Value` səpələnmiş açarları bir yerdə toplamır və tip yoxlaması zəifdir |
+| Asinxronluq | Virtual thread-lər + bloklayan kod | Reaktiv stek (WebFlux, Reactor) | Çox yüksək paralellikdə backpressure və streaming lazım olanda; gateway artıq reaktivdir |
+| Boilerplate | auth-service-də Lombok, digərlərində record və əl ilə yazılmış getter-lər | Yalnız Java record-ları | DTO və dəyər obyektləri üçün record kifayətdir; JPA entity-ləri record ola bilməz |
+| Paylaşılan konfiqurasiya | `common` modulunun komponent skanı ilə daxil olması | Öz `@AutoConfiguration` modulu + `AutoConfiguration.imports` | Bir neçə komanda eyni modulu istifadə edəndə — davranış açıq şərtlərlə idarə olunur (fəsil 21.9) |
+| AOP | Spring proxy-ləri (JDK/CGLIB) | AspectJ compile/load-time weaving | Self-invocation və `private` metodlarda da aspekt lazım olanda (nadir hal) |
+
+## 4.13 Uğursuzluq ssenariləri
+
+Spring tətbiqinin əksər "sirli" xətaları başlanğıcda və ya proxy səviyyəsində yaranır. Bu layihədə ehtimal olunan
+hallar [NƏTİCƏ]:
+
+| Simptom | Səbəb | Bu layihədə harada | Necə tapmaq |
+|---|---|---|---|
+| `NoSuchBeanDefinitionException: ObjectMapper` | Jackson 2 bean-i yalnız Eureka asılılığı ilə gəlir; asılılıq çıxarılsa kontekst qalxmır | F20 (fəsil 3.7) | Başlanğıc logu; `mvn dependency:tree` |
+| `NoUniqueBeanDefinitionException` | Eyni tipdən iki bean (məs. iki `KafkaTemplate`) | `KafkaJsonConfiguration` Boot-un template-ni əvəz edir (4.5) | `/actuator/conditions` (lokal açıq olsa), `/actuator/beans` |
+| `@Async` metod sinxron işləyir | `@EnableAsync` şərti konfiqurasiyadadır: `spring.threads.virtual.enabled=false` olsa, aktiv olmur | `VirtualThreadConfiguration` (4.5) | Thread adı və ya cavab gecikməsi |
+| `@Transactional` / `@Cacheable` işləmir | Self-invocation və ya `private` metod | Hazırda yoxdur, lakin yeni kodda asan yaranır (4.8) | SQL logu, cache metrikləri |
+| `BeanCurrentlyInCreationException` | Dövri asılılıq | Konstruktor injeksiyası bunu erkən göstərir | Başlanğıc logu |
+| Tətbiq başlamır, `--enable-preview` xətası | Preview ilə kompilyasiya olunmuş siniflər bayraqsız işə salınıb | Dockerfile və surefire bayrağı (3.9) | `UnsupportedClassVersionError` mesajı |
+| Konfiqurasiya dəyəri gözləniləndən fərqlidir | Mənbə prioriteti: env dəyişəni > Config Server > lokal yml | F32, 4.6 | `/actuator/env` (lokal açıq olsa) |
+| Virtual thread "ilişir" | `synchronized` daxilində bloklayan I/O (pinning) — JDK 24+-da əsasən aradan qalxıb | Layihə kodunda yoxdur; kitabxanalarda ola bilər | JFR `jdk.VirtualThreadPinned` hadisəsi |
+
+## 4.14 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★ — Auto-configuration hesabatı.** Yalnız lokal mühitdə campaign-service üçün
+`management.endpoints.web.exposure.include`-ə `conditions,beans` əlavə edin və `/actuator/conditions`-u açın.
+**Yoxlama:** `KafkaJsonConfiguration` və `VirtualThreadConfiguration`-ın hansı şərtlə uyğun gəldiyini tapın. Bu
+endpoint-ləri istehsalda açmayın (F40).
+
+**T2 ★★ — `@EnableAsync`-in şərtə bağlı olduğunu sübut edin.** auth-service-də `spring.threads.virtual.enabled: false`
+edin, log-service-i dayandırın və login müddətini ölçün; sonra `true`-ya qaytarıb təkrarlayın. **Gözlənilən nəticə:**
+`false` halında audit çağırışı sorğu thread-ində işləyir və login retry gecikmələri (3 × 500 ms) qədər yavaşlayır.
+
+**T3 ★★ — Self-invocation tələsi.** `CampaignService`-ə müvəqqəti metod əlavə edin:
+`public Map<String, Long> statsTwice() { getStatistics(); return getStatistics(); }`, onu controller-dən çağırın və
+`logging.level.org.hibernate.SQL: DEBUG` ilə SQL-ə baxın. **Gözlənilən nəticə:** iki `GROUP BY` sorğusu — cache
+proxy-dən keçilmədiyi üçün işləmir. Dəyişikliyi geri qaytarın.
+
+**T4 ★★★ — Şərti konfiqurasiyanı test edin.** `ApplicationContextRunner` ilə `VirtualThreadConfiguration` üçün test
+yazın: xassə `true` olanda `applicationTaskExecutor` bean-i var, `false` olanda yoxdur. **Yoxlama:** test Spring
+Boot-un tam kontekstini qaldırmadan, millisaniyələrlə işləyir.
+
+## 4.15 Müsahibə sualları
 
 **S1. Tək konstruktorlu sinifdə niyə `@Autowired` lazım deyil?**
 Cavab: Spring 4.3-dən bəri yeganə konstruktor avtomatik injeksiya nöqtəsi sayılır. Bir neçə konstruktor varsa,
@@ -413,7 +462,7 @@ Cavab: CPU-intensiv işi sürətləndirmir, aşağı axın sistemlərinin (DB po
 paralelliyi özü məhdudlaşdırmır. Connection pool-un ölçüsü kimi resurslar yenə də darboğaz olaraq qalır;
 `ThreadLocal` kontekstləri yeni thread-lərə avtomatik ötürülmür.
 
-## 4.13 Xülasə
+## 4.16 Xülasə
 
 - Konteyner bean-ləri skan + auto-configuration + şərtlər əsasında yaradır, asılılıqları konstruktorla ötürür.
 - `scanBasePackages` paylaşılan modulları hər servisə qoşur.

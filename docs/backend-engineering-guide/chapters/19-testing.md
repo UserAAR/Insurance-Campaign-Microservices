@@ -234,7 +234,73 @@ audit kontraktı; Kafka hadisələri üçün JSON Schema və ya Avro + Schema Re
 **Gateway testləri** — `@SpringBootTest(webEnvironment = RANDOM_PORT)` + `WebTestClient` + WireMock downstream + Redis
 Testcontainers: 401 (token yox), 429 (iki ardıcıl sorğu), marşrut StripPrefix.
 
-## 19.7 Müsahibə sualları
+## 19.7 Test infrastrukturunun xəritəsi
+
+```mermaid
+%% caption: Test qatları və baza siniflər (hər tətbiq modulunda eyni quruluş)
+flowchart LR
+    subgraph U["Unit (Mockito)"]
+        direction TB
+        BS["AbstractBaseServiceTest<br/>LENIENT"] --> ST["AuthServiceTest<br/>CampaignServiceTest<br/>CampaignGrpcClientTest ..."]
+    end
+    subgraph I["İnteqrasiya (konteynerlər)"]
+        direction TB
+        D[(Docker)] --> TC["AbstractTestContainerConfiguration<br/>PostgreSQL · Kafka · ES"]
+        TC --> RC["AbstractRestControllerTest<br/>MockMvc"]
+        RC --> CT["CampaignControllerTest<br/>DashboardControllerTest<br/>AuthAuditLogControllerTest ..."]
+    end
+    subgraph X["Yoxdur (F33)"]
+        direction TB
+        G[Gateway testləri] ~~~ K["Kafka → ES uçdan-uca"] ~~~ P[Kontrakt testləri]
+    end
+    U ~~~ I ~~~ X
+```
+
+Diaqramdan çıxan nəticə: unit qatı yaxşı qurulub, inteqrasiya qatı real konteynerlərlə işləyir, lakin sistemin
+ən riskli hissələri — servislərarası kontraktlar, asinxron axın və gateway — test piramidasının heç bir qatında yoxdur.
+
+## 19.8 Alternativlər
+
+| Ehtiyac | Layihədəki seçim | Alternativ | Nə vaxt |
+|---|---|---|---|
+| Real DB testi | Testcontainers PostgreSQL | H2 / in-memory | Demək olar ki, heç vaxt: partial indeks, tiplər və SQL dialekti fərqlənir |
+| Spring kontekstinin ölçüsü | `@SpringBootTest` (tam kontekst) | Slice testlər: `@WebMvcTest`, `@DataJpaTest` | Yalnız bir qatı yoxlayanda daha sürətli və izolyasiyalı |
+| Xarici HTTP asılılığı | Klient mock-lanır | WireMock / MockWebServer | Timeout, 5xx, yavaş cavab kimi real HTTP davranışlarını sınamaq üçün |
+| Servislərarası kontrakt | Yoxdur | Pact, Spring Cloud Contract | Audit DTO-su, proto və Kafka JSON-u dəyişəndə istehlakçını sındırmamaq üçün |
+| Arxitektura qaydaları | Yoxdur | ArchUnit, Spring Modulith testləri | Təbəqə qaydaları (controller → repository qadağası) avtomatik yoxlansın |
+| Testlərin keyfiyyəti | JaCoCo əhatəsi | Mutation testing (PIT) | Əhatə faizi yüksək, amma assert-lər zəif olanda |
+
+## 19.9 Uğursuzluq ssenariləri
+
+| Simptom | Səbəb | Həll |
+|---|---|---|
+| `Could not find a valid Docker environment` | Docker işləmir və ya CI agentində yoxdur | Docker-i başlatmaq; CI-da Docker-in mövcud olduğu runner |
+| Testlər çox yavaşdır | Hər test sinfi fərqli `@MockitoBean` dəsti ilə yeni Spring konteksti qurur | Mock-ları baza sinifdə birləşdirmək, kontekst keşini qorumaq (19.4) |
+| Image endirilmir (`toomanyrequests`) | Docker Hub limitləri | Registry mirror, image-ləri əvvəlcədən çəkmək |
+| Lokal yaşıl, CI-da qırmızı | Fərqli image versiyaları (F28), saat zonası, port konflikti | Sabit versiyalar, `Clock` inyeksiyası, təsadüfi portlar (Testcontainers standartı) |
+| Asinxron test arabir sınır | `Thread.sleep` ilə gözləmə (Kafka, `@Async`) | Awaitility ilə şərt əsaslı gözləmə |
+| Testdə keçən sxem istehsalda sınır | `create-drop` + Liquibase söndürülüb (F27) | Testlərdə miqrasiyaları işə salmaq |
+| `UnnecessaryStubbingException` gözlənilmədən | `CampaignServiceTest` sərt rejimdədir, digərləri LENIENT | Bir siyasət seçmək; standart olaraq STRICT_STUBS |
+
+## 19.10 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★★ — Bug-ı testlə sənədləşdirin.** F07 halları üçün MockMvc testləri yazın (qırıq JSON → 400, səhv UUID → 400).
+**Gözlənilən nəticə:** hazırda qırmızı; fəsil 8-dəki düzəlişdən (8, T2) sonra yaşıl. Bu, "əvvəl test, sonra düzəliş"
+təcrübəsidir.
+
+**T2 ★★ — Kafka inteqrasiya testi.** campaign-service-də Testcontainers Kafka ilə kampaniya yaradın və test consumer-i
+ilə `campaign-events`-dən hadisəni oxuyun; `Thread.sleep` əvəzinə Awaitility. **Yoxlama:** hadisənin açarı, statusu və
+kateqoriyası düzgündür.
+
+**T3 ★★ — ArchUnit qaydası.** "Controller-lər repository-dən birbaşa asılı olmamalıdır" qaydasını yazın. **Gözlənilən
+nəticə:** `SlowRequestLogController` qaydanı pozur (21.9) — ya kodu düzəldin, ya da istisnanı əsaslandırın.
+
+**T4 ★★★ — Testləri istehsala yaxınlaşdırın.** Testlərdə Liquibase-i aktivləşdirin (7, T4) və Testcontainers
+image-lərini Compose versiyaları ilə eyniləşdirin (F28). **Yoxlama:** bütün testlər yaşıl, sxem `validate` keçir.
+
+## 19.11 Müsahibə sualları
 
 **S1. `@WithMockUser` əvəzinə real JWT ilə test etməyin üstünlüyü?**
 Cavab: `@WithMockUser` SecurityContext-i birbaşa qurur və JWT filtrini, imza yoxlamasını, claim → authority çevrilməsini
@@ -257,7 +323,7 @@ lazımsız stub-ları və səhv arqumentli stub-ları aşkarlayır. Baza sinifd�
 Cavab: Consumer-driven contract testing (Pact/Spring Cloud Contract): consumer gözləntisini yazır, provider build-i onu
 yoxlayır. Asinxron hadisələr üçün sxem reyestri və uyğunluq qaydaları; gRPC üçün proto breaking-change yoxlaması.
 
-## 19.8 Xülasə
+## 19.12 Xülasə
 
 - 93 test: auth məntiqi və campaign/dashboard/log avtorizasiyası yaxşı örtülüb; real RS256 token ilə MockMvc testləri
   nümunəvidir.

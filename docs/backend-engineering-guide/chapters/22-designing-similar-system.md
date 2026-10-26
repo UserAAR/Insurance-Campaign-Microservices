@@ -351,7 +351,23 @@ Modulith və ya ArchUnit testləri qaydaları avtomatik yoxlayır.
 | Testdə `create-drop` | Testlər istehsal sxemi ilə işləməlidir |
 | İki üslub (Lombok/MapStruct vs əl ilə) | Konvensiyanı ADR ilə sabitləyin |
 
-## 22.10 Müsahibə: "Kampaniya idarəetmə sistemi dizayn edin"
+## 22.10 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★★ — Yeni funksiyanı dizayn edin.** "Müştərinin kampaniyaya qoşulması" funksiyası üçün API, data modeli,
+hadisələr və hansı servisin sahib olduğunu yazın; qərarı ADR ilə əsaslandırın. **Yoxlama:** dublikat qoşulma, kampaniya
+deaktiv olanda davranış və idempotentlik həll olunub.
+
+**T2 ★★★ — Outbox relay.** 22.6-dakı relay-i `SELECT ... FOR UPDATE SKIP LOCKED` ilə reallaşdırın və iki relay
+instansı ilə test edin. **Yoxlama:** normal axında heç bir hadisə iki dəfə göndərilmir; bir instans dayananda digəri
+davam edir.
+
+**T3 ★★ — C4 konteyner diaqramı.** 22.3-dəki hədəf arxitekturanı C4 "container" səviyyəsində çəkin: hər konteyner
+üçün texnologiya, məsuliyyət və əlaqə protokolu. **Yoxlama:** diaqramı görən başqa mühəndis sistemi sizin izahınız
+olmadan başa düşür.
+
+## 22.11 Müsahibə: "Kampaniya idarəetmə sistemi dizayn edin"
 
 Sistem dizaynı müsahibəsində 45 dəqiqəlik cavabın strukturu:
 
@@ -369,7 +385,7 @@ Sistem dizaynı müsahibəsində 45 dəqiqəlik cavabın strukturu:
 Bu repozitoriyanı nümunə kimi gətirmək güclü arqumentdir: "Mən bunu qurulmuş bir sistemdə gördüm, burada dual write və
 deadline-sız gRPC problemləri var idi; dizaynımda onları belə həll edirəm."
 
-## 22.11 Xülasə
+## 22.12 Xülasə
 
 - Başlanğıc nöqtəsi tələblər və açıq suallardır; arxitektura onlardan çıxır.
 - Bu ölçüdə modul-monolit daha sadədir; paylanmış variant seçilərsə — outbox, oxu modeli, IdP, platformanın kəşfi.

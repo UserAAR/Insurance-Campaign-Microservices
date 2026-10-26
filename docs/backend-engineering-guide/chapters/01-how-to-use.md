@@ -64,12 +64,14 @@ səbəbi" kimi **analiz** təqdim edirəm.
 
 Hər əsas texniki fəsli təxminən bu ardıcıllıqla qurmuşam: **problem → nəzəriyyə → daxili mexanizm → repozitoriya
 implementasiyası → icra axını → konfiqurasiya → yeni layihədə tətbiq → alternativlər → xətalar və troubleshooting →
-müsahibə sualları → xülasə.**
+praktiki tapşırıqlar → müsahibə sualları → xülasə.**
 
 ## 1.5 Tövsiyə olunan oxu yolları
 
 **Tam yol (tövsiyə edirəm, 2–3 həftə, gündə 2–3 saat):** fəsillərə ardıcıl gedin; hər fəsildən sonra
-istinad olunan faylları açıb yenidən oxuyun, sonra fəsil sonundakı müsahibə suallarına kitaba baxmadan cavab verin.
+istinad olunan faylları açıb yenidən oxuyun, fəslin "Praktiki tapşırıqlar" bölməsindən ən azı bir tapşırığı öz
+fork-unuzda edin, sonra müsahibə suallarına kitaba baxmadan cavab verin. Oxumaq tanıyır, etmək isə yadda saxlayır —
+tapşırıqlar kitabın ən vacib hissəsidir.
 
 **Sürətli bərpa (3–4 gün):** 2 → 3 → 4 → 6 → 8 → 10 → 20 → 21 → 24.
 

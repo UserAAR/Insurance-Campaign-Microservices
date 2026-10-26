@@ -460,7 +460,22 @@ E) sındırır. Kafka-nın düşməsi isə `max.block.ms` səbəbindən campaign
 axınlarını (B, C, D, G) yavaşladır, çünki yavaş sorğu filtri hər yavaş cavabdan sonra eyni thread-də `send()` çağırır
 (F10); auth və dashboard axınları (dashboard-un gRPC çağırışı daxil) təsirlənmir.
 
-## 20.12 Müsahibə sualları
+## 20.12 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★★ — Sübut zənciri.** B axınını (kampaniya yaratma) bir dəfə icra edin və hər izi cədvəldə toplayın: HTTP cavabı,
+`campaigns` və `campaign_status_histories` sətirləri, `campaign-events` və `log-events` mesajları, Elasticsearch
+sənədi, Tempo trace-i, Loki logları. **Yoxlama:** hər iz 20.3-dəki "müşahidə olunan nəticə" ilə üst-üstə düşür.
+
+**T2 ★ — Ardıcıllıq diaqramını özünüz çəkin.** H axınından logout üçün Mermaid ardıcıllıq diaqramı yazın, sonra
+`AuthService.logout` kodu ilə müqayisə edin. **Yoxlama:** tranzaksiya sərhədi və asinxron audit düzgün göstərilib.
+
+**T3 ★★ — Uğursuzluq təlimi.** Redis, Kafka, Elasticsearch və log-service-i növbə ilə dayandırıb A, B, E, G axınlarını
+icra edin. **Yoxlama:** nəticələri 20.11-dəki matrislə müqayisə edin; hər fərqi qeyd edin — kitabdakı proqnoz
+yanlışdırsa, onu düzəltmək ən dəyərli öyrənmədir.
+
+## 20.13 Müsahibə sualları
 
 **S1. Kampaniya yaratma sorğusunu gateway-dən DB-yə və Kafka-ya qədər izah edin.**
 Cavab: Rate limiter (Redis token bucket, `user:<sub>` açarı) → gateway JWT yoxlaması → `lb://` ilə instans seçimi →
@@ -490,7 +505,7 @@ executor-a çıxarmaq, outbox.
 Cavab: Əks halda rollback olunan əməliyyat üçün "uğurlu" audit qeydi yaranır. `@TransactionalEventListener(AFTER_COMMIT)`
 və ya outbox audit-i yalnız real nəticəyə bağlayır.
 
-## 20.13 Xülasə
+## 20.14 Xülasə
 
 - Hər xarici sorğu: 429 filtri → rate limiter → gateway JWT → `lb://` → (campaign/log-da yavaş sorğu filtri) → Spring Security →
   `@PreAuthorize` → controller → servis.

@@ -129,7 +129,7 @@ Cəmi izlənən fayl: **178**; ən azı bir fəsildə istinad olunan: **178**; s
 | `main: campaign/controller/CampaignController.java` | CampaignController | 02, 04, 05, 06, 08, 10, 20, 25 | OK |
 | `main: campaign/domain/Campaign.java` | Campaign | 00, 01, 02, 03, 04, 05, 06, 11, 13, 17, 19, 20, 22, 25 | OK |
 | `main: campaign/domain/CampaignCategory.java` | CampaignCategory | 02, 06, 07, 08, 11 | OK |
-| `main: campaign/domain/CampaignStatus.java` | CampaignStatus | 02, 06, 07, 11, 13, 21, 22 | OK |
+| `main: campaign/domain/CampaignStatus.java` | CampaignStatus | 02, 05, 06, 07, 11, 13, 21, 22 | OK |
 | `main: campaign/dto/CampaignHistoryResponse.java` | CampaignHistoryResponse | 06, 13 | — |
 | `main: campaign/dto/CampaignPageResponse.java` | CampaignPageResponse | 05, 06, 20, 24 | OK |
 | `main: campaign/dto/CampaignResponse.java` | CampaignResponse | 05, 06, 20 | — |
@@ -147,8 +147,8 @@ Cəmi izlənən fayl: **178**; ən azı bir fəsildə istinad olunan: **178**; s
 | `test: campaign/base/AbstractBaseServiceTest.java` | Test: AbstractBaseServiceTest | 19 | OK |
 | `test: campaign/base/AbstractRestControllerTest.java` | Test: AbstractRestControllerTest | 19 | OK |
 | `test: campaign/base/AbstractTestContainerConfiguration.java` | Test: AbstractTestContainerConfiguration | 07, 13, 15, 19 | OK |
-| `test: campaign/controller/CampaignControllerTest.java` | Test: CampaignControllerTest | 08, 19 | OK |
-| `test: campaign/service/CampaignServiceTest.java` | Test: CampaignServiceTest | 02, 04, 19 | OK |
+| `test: campaign/controller/CampaignControllerTest.java` | Test: CampaignControllerTest | 08, 10, 19 | OK |
+| `test: campaign/service/CampaignServiceTest.java` | Test: CampaignServiceTest | 02, 04, 06, 19 | OK |
 | `src/test/resources/keys/private.pem` | Test RSA açarı | 25 | — |
 | `src/test/resources/keys/public.pem` | Test RSA açarı | 25 | — |
 
@@ -159,7 +159,7 @@ Cəmi izlənən fayl: **178**; ən azı bir fəsildə istinad olunan: **178**; s
 | `pom.xml` | Ortaq modulun asılılıqları | 02, 03, 11, 18, 20 | OK |
 | `main: common/api/ApiError.java` | Xəta cavab zərfi | 02, 05, 08, 10, 21, 23 | OK |
 | `main: common/api/ApiResponse.java` | Uğurlu cavab zərfi | 02, 04, 05, 08, 12, 13, 20, 21 | OK |
-| `main: common/config/KafkaJsonConfiguration.java` | Kafka producer (String açar, JSON dəyər) | 03, 04, 06, 11, 23 | OK |
+| `main: common/config/KafkaJsonConfiguration.java` | Kafka producer (String açar, JSON dəyər) | 03, 04, 06, 11, 17, 23 | OK |
 | `main: common/config/VirtualThreadConfiguration.java` | @EnableAsync + virtual thread executor | 04, 20 | OK |
 | `main: common/event/CampaignStatusChangedEvent.java` | Kampaniya status hadisəsi | 02, 06, 11 | — |
 | `main: common/event/SlowRequestLogEvent.java` | Yavaş sorğu hadisəsi | 02, 04, 11, 19, 20 | — |
@@ -228,9 +228,9 @@ Cəmi izlənən fayl: **178**; ən azı bir fəsildə istinad olunan: **178**; s
 | `Dockerfile` | Çoxmərhələli image build | 25 | — |
 | `pom.xml` | Modul asılılıqları | 25 | — |
 | `main: log/LogServiceApplication.java` | LogServiceApplication | 25 | — |
-| `main: log/config/KafkaDlqConfiguration.java` | KafkaDlqConfiguration | 04, 11, 20, 21 | OK |
+| `main: log/config/KafkaDlqConfiguration.java` | KafkaDlqConfiguration | 04, 11, 17, 20, 21 | OK |
 | `main: log/controller/AuthAuditLogController.java` | AuthAuditLogController | 02, 08, 10, 12, 20, 25 | OK |
-| `main: log/controller/SlowRequestLogController.java` | SlowRequestLogController | 02, 05, 10, 12, 20, 21, 25 | OK |
+| `main: log/controller/SlowRequestLogController.java` | SlowRequestLogController | 02, 05, 10, 12, 19, 20, 21, 25 | OK |
 | `main: log/model/document/AuthAuditLogDocument.java` | AuthAuditLogDocument | 12, 25 | OK |
 | `main: log/model/document/SlowRequestDocument.java` | SlowRequestDocument | 05, 11, 12, 20, 23 | OK |
 | `main: log/model/dto/request/AuthAuditLogRequest.java` | AuthAuditLogRequest | 08, 14, 25 | OK |
@@ -243,7 +243,7 @@ Cəmi izlənən fayl: **178**; ən azı bir fəsildə istinad olunan: **178**; s
 | `test: log/base/AbstractRestControllerTest.java` | Test: AbstractRestControllerTest | 19 | — |
 | `test: log/base/AbstractTestContainerConfiguration.java` | Test: AbstractTestContainerConfiguration | 07, 13, 15, 19 | — |
 | `test: log/controller/AuthAuditLogControllerTest.java` | Test: AuthAuditLogControllerTest | 19 | — |
-| `test: log/controller/SlowRequestLogControllerTest.java` | Test: SlowRequestLogControllerTest | 05, 19 | OK |
+| `test: log/controller/SlowRequestLogControllerTest.java` | Test: SlowRequestLogControllerTest | 05, 12, 19 | OK |
 | `test: log/service/AuthAuditLogServiceTest.java` | Test: AuthAuditLogServiceTest | 19 | — |
 | `test: log/service/SlowRequestLogConsumerTest.java` | Test: SlowRequestLogConsumerTest | 19 | — |
 | `src/test/resources/keys/private.pem` | Test RSA açarı | 25 | — |
@@ -306,12 +306,12 @@ Kateqoriyalar fəsil 21.1-dədir. Tam mətn və sübut: `analysis/01-architectur
 | F17 | R | Refresh token rotasiyasında optimistik kilid yoxdur → paralel iki refresh eyni token-lə iki yeni cüt ala bilər | 09, 10, 20, 21, 24 |
 | F18 | D | Paralel qeydiyyatda DB unique pozuntusu (`DataIntegrityViolationException`) tutulmur → 500 + SQL mesajı | 07, 08, 09, 20, 21, 24, 25 |
 | F19 | R | gRPC klientində deadline yoxdur; server tərəfində `@GrpcAdvice` yoxdur → `ResourceNotFoundException` gRPC `UNKNOWN`, dashboard-da 500 olur (404 … | 08, 13, 20, 21, 22, 24, 25 |
-| F20 | M | Jackson 2 `ObjectMapper` bean-i yalnız Eureka client-in tranzitiv gətirdiyi `spring-boot-jackson2` (deprecated) sayəsində mövcuddur … | 03, 21, 23 |
+| F20 | M | Jackson 2 `ObjectMapper` bean-i yalnız Eureka client-in tranzitiv gətirdiyi `spring-boot-jackson2` (deprecated) sayəsində mövcuddur … | 03, 04, 21, 23 |
 | F21 | M | `JsonSerializer`/`JsonDeserializer` spring-kafka 4.0-dan `@Deprecated(forRemoval=true)` | 21 |
 | F22 | R | Repozitoriyada demo RSA private key və DB/Grafana şifrələri var | 01, 09, 10, 18, 21, 23, 25 |
 | F23 | M | Observation konfiqurasiyası 3 dəfə kopyalanıb (gateway, config, discovery) | 03, 17, 21, 25 |
 | F24 | R (performans) | Promtail `trace_id`/`span_id`-ni Loki label-ı edir → yüksək kardinallıq | 17, 21, 23, 24 |
-| F25 | T | Yavaş sorğu həddi 5 ms → filtrin aktiv olduğu servislərdə (campaign, log) praktiki olaraq hər sorğu Kafka-ya gedir | 11, 20, 21, 22 |
+| F25 | T | Yavaş sorğu həddi 5 ms → filtrin aktiv olduğu servislərdə (campaign, log) praktiki olaraq hər sorğu Kafka-ya gedir | 11, 17, 20, 21, 22 |
 | F26 | M | log-service `Page<SlowRequestDocument>`-u birbaşa serializə edir (DTO-suz); campaign-service isə `CampaignPageResponse` istifadə edir | 05, 20, 21, 24 |
 | F27 | R | Migrasiyalar testlərdə işləmir (`spring.liquibase.enabled=false`, `ddl-auto=create-drop`) → partial unique indeks və sxem validasiyası test edilmir | 07, 19, 21, 24 |
 | F28 | M | Testcontainers image-ləri istehsal image-lərindən fərqlidir (postgres:17-alpine vs postgres:latest; cp-kafka 7.6.1 vs apache/kafka:latest) | 18, 19, 21 |
@@ -326,10 +326,10 @@ Kateqoriyalar fəsil 21.1-dədir. Tam mətn və sübut: `analysis/01-architectur
 | F37 | R | `CampaignEntity`-də `@Version` yoxdur: paralel `approve` və `deactivate` hər ikisi uğurlu ola bilər (lost update), tarixçədə ziddiyyətli iki qeyd və … | 06, 08, 20, 21, 22, 24 |
 | F38 | R (observability) | `GlobalExceptionHandler` heç bir istisnanı loglamır; catch-all ilə emal olunan 500 xətalarının stack trace-i log-a düşmür | 08, 17, 21, 22, 23 |
 | F39 | M | `AuthAuditLogRequest` üçün heç bir validasiya yoxdur (`@Valid` və constraint-lər yoxdur); `slow-requests` `page/size` yoxlanmır (mənfi `page` → 500) | 08, 21, 25 |
-| F40 | R | `/actuator/**` bütün servislərdə `permitAll`; gateway-in öz actuator-u da açıq yollardadır; Compose servis portlarını host-a açır → `prometheus` … | 10, 17, 21, 22, 23, 25 |
+| F40 | R | `/actuator/**` bütün servislərdə `permitAll`; gateway-in öz actuator-u da açıq yollardadır; Compose servis portlarını host-a açır → `prometheus` … | 04, 10, 17, 21, 22, 23, 25 |
 | F41 | M | CORS konfiqurasiyası yoxdur; başqa origin-dən brauzer klientləri bloklanır (Swagger UI gateway ilə eyni origin-dədir) | 21 |
 | F42 | M | `GET /slow-requests` sıralamasız `findAll(PageRequest)` edir — nəticələr `occurredAt` üzrə deyil, ixtiyari sırada; `SlowRequestDocument` sahələrinin … | 12, 20, 21, 23, 24 |
 | F43 | R (əməliyyat) | Elasticsearch indekslərində saxlanma/ILM siyasəti yoxdur; 5 ms həddi ilə `slow-request-logs` məhdudiyyətsiz böyüyür | 12, 21, 22, 23, 24 |
 | F44 | T | Gateway JWT/PEM kodu `security` modulundan ayrıca yazılıb (reaktiv gateway servlet asılılıqlarını çəkməsin deyə) — eyni məntiq iki yerdə | 21 |
 | F45 | M | `DUPLICATE` statusu heç bir axında təyin olunmur, lakin sorğu, yoxlama, süzgəc və partial indeksdə nəzərə alınır (ölü vəziyyət) | 21 |
-| F46 | R | `@Async` audit tapşırığı tranzaksiya daxilində, commit-dən əvvəl verilir → rollback olunan əməliyyat üçün "uğurlu" audit qeydi yarana bilər | 21 |
+| F46 | R | `@Async` audit tapşırığı tranzaksiya daxilində, commit-dən əvvəl verilir → rollback olunan əməliyyat üçün "uğurlu" audit qeydi yarana bilər | 09, 21 |

@@ -397,7 +397,27 @@ kilidlənməsi (brute-force), MFA, email doğrulaması, token ailələri, açar 
 email-ə; vahid xəta mesajları və sabit vaxt; uğursuz cəhdlərin sayılması və kilid; qısa access token (5–15 dəq);
 refresh token rotasiyası + reuse detection; JWKS endpoint ilə açar rotasiyası; private key secret store-da.
 
-## 9.13 Müsahibə sualları
+## 9.13 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★★ — F01-i bağlayın.** `RegisterRequest`-dən `role`-u çıxarın, qeydiyyat həmişə `ROLE_USER` versin; testləri
+yeniləyin və "qeydiyyat admin yarada bilməz" testini əlavə edin. **Yoxlama:** `role: ROLE_ADMIN` göndərilən sorğu ya
+400, ya da `ROLE_USER` ilə nəticələnir — hansını seçdiyinizi əsaslandırın.
+
+**T2 ★★ — F02 və F03.** `forgot-password` istifadəçinin olub-olmamasından asılı olmayaraq eyni cavabı (məs. 202)
+qaytarsın, token cavabda olmasın. Token-i göndərmək üçün `PasswordResetNotifier` interfeysi yaradın; lokal profil üçün
+onu yalnız log-a yazan implementasiya verin. **Yoxlama:** mövcud və mövcud olmayan istifadəçi üçün cavablar eynidir.
+
+**T3 ★★★ — Refresh yarışını reproduksiya edin (F17).** Testcontainers DB ilə iki thread eyni refresh token-i
+`CountDownLatch` ilə eyni anda göndərsin. **Gözlənilən nəticə:** hər ikisi uğurlu olur. Düzəliş:
+`update RefreshTokenEntity r set r.revokedAt = :now where r.id = :id and r.revokedAt is null` şərti yeniləməsi;
+yenilənən sətir sayı 0-dırsa 401. **Yoxlama:** yalnız bir thread uğurlu olur.
+
+**T4 ★★ — Audit-i commit-dən sonraya keçirin (F46).** `ApplicationEventPublisher` + `@TransactionalEventListener(phase =
+AFTER_COMMIT)` + `@Async`. **Yoxlama:** rollback olunan qeydiyyat üçün audit sorğusu göndərilmir.
+
+## 9.14 Müsahibə sualları
 
 **S1. Access token və refresh token-i niyə ayırırıq?**
 Cavab: Access token tez-tez göndərilir və hər servisdə lokal yoxlanılır — stateless və qısa ömürlü olmalıdır, çünki
@@ -427,7 +447,7 @@ introspection.
 Cavab: Cavab vaxtının mövcud və mövcud olmayan istifadəçi üçün eyni olması üçün; əks halda timing hücumu ilə mövcud
 hesablar aşkarlanır.
 
-## 9.14 Xülasə
+## 9.15 Xülasə
 
 - auth-service istifadəçiləri, şifrələri (bcrypt), access (JWT RS256) və refresh (təsadüfi, SHA-256 hash-li) token-ləri
   idarə edir; digər servislər ondan runtime-da asılı deyil.

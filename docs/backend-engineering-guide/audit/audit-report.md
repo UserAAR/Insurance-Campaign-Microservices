@@ -8,10 +8,11 @@ təsvir edir. Rəqəmlər son build-ə aiddir (bax: `audit/verify-refs.json`, `a
 
 | Göstərici | Dəyər |
 |---|---|
-| Kitab | *Mikroservislərin Anatomiyası* — AAR; `output/Mikroservislerin-Anatomiyasi-AAR.pdf`: üz qabığı + 245 nömrəli səhifə (cəmi 246), ~16 MB |
+| Kitab | *Mikroservislərin Anatomiyası* — AAR; `output/Mikroservislerin-Anatomiyasi-AAR.pdf`: üz qabığı + 260 nömrəli səhifə (cəmi 261), ~16 MB |
 | Üz qabığı | `cover/cover.svg` (vektor) və `output/Mikroservislerin-Anatomiyasi-AAR-cover.png` (2480 × 3508) |
-| Fəsillər | Ön söz + 26 fəsil (7 hissə), ~66 000 söz |
-| Mermaid diaqramları | 33 |
+| Fəsillər | Ön söz + 26 fəsil (7 hissə), ~71 000 söz |
+| Praktiki tapşırıqlar | 85 (fəsillər 2–23, çətinlik dərəcəsi və yoxlama meyarı ilə) |
+| Mermaid diaqramları | 34 |
 | Mənbə ilə doğrulanan kod çıxarışları | 70 |
 | `fayl:sətir` istinadları | 459 (101 fərqli fayl) — avtomatik yoxlamada 0 xəta |
 | Müsahibə sualı (cavabla) | 187 |
@@ -34,6 +35,7 @@ Yoxlama tapşırığın tələblər siyahısı ilə fəsillərin müqayisəsi il
 | Oxşar sistemin dizaynı | Fəsil 22 | Var |
 | İstehsal mühəndisliyi, runbook | Fəsil 23 | Var |
 | Müsahibəyə hazırlıq, 5 dəqiqəlik izah | Fəsil 24 + hər fəslin sonu | Var |
+| Praktiki tapşırıqlar (yoxlama meyarı ilə) | Fəsillər 2–23, hər birində 3–5 tapşırıq | Var (sonradan əlavə edildi) |
 | Lüğət, endpoint kataloqu, konfiqurasiya arayışı | Fəsil 25 | Var |
 | Əhatə matrisi | Fəsil 26 (yaradılır) + `analysis/coverage-matrix.md` | Var |
 | Redaktə oluna bilən mənbələr və build skriptləri | `chapters/`, `build/`, `README.md` | Var |
@@ -41,6 +43,10 @@ Yoxlama tapşırığın tələblər siyahısı ilə fəsillərin müqayisəsi il
 Audit A zamanı tapılıb düzəldilən boşluqlar:
 
 - Fəsil 12 (Elasticsearch) və 16 (Spring Cloud) diaqramsız idi — hər birinə bir diaqram əlavə olundu.
+- Bəzi texnoloji fəsillərdə 12 addımlı strukturun hissələri yox idi: 4, 8, 12, 17 və 19-cu fəsillərə "Alternativlər",
+  4 və 19-cu fəsillərə "Uğursuzluq ssenariləri", 19-cu fəslə test infrastrukturu diaqramı əlavə olundu.
+- Kitabda praktiki tapşırıq yox idi — 2–23-cü fəsillərin hər birinə yoxlama meyarı və çətinlik dərəcəsi olan 3–5
+  tapşırıq əlavə edildi (cəmi 85).
 - 27 fayl heç bir fəsildə xatırlanmırdı — 25.4-cü əlavədə hər birinin məzmunu və rolu təsvir olundu (fayllar sadə və ya
   şablon təkrarı olduğu üçün ayrıca fəsil tələb etmir; bu, əhatə matrisində "25" kimi açıq göstərilir).
 - `coverage.py`-da iki hesablama səhvi düzəldildi: `.gitignore` boş "stem" səbəbindən bütün fəsillərə uyğun gəlirdi;
@@ -85,8 +91,8 @@ yalançı siqnallardır.
 
 ## Audit C — PDF bütövlüyü
 
-**Avtomatik:** `build/audit_pdf.py` — mündəricatdakı 323 başlığın hər birinin göstərilən səhifədə mətn kimi tapılması,
-üz qabığından sonrakı hər səhifədə `N / 245` altbilgisi və PDF səhifə etiketlərinin (`Üz qabığı`, `1`, `2`, …) uyğunluğu,
+**Avtomatik:** `build/audit_pdf.py` — mündəricatdakı 353 başlığın hər birinin göstərilən səhifədə mətn kimi tapılması,
+üz qabığından sonrakı hər səhifədə `N / 260` altbilgisi və PDF səhifə etiketlərinin (`Üz qabığı`, `1`, `2`, …) uyğunluğu,
 boş səhifələrin olmaması, şriftlərin PDF-ə daxil edilməsi (26 şrift; Type3 qlifləri
 daxili təsvir olunur), mətn qatında U+FFFD olmaması və Azərbaycan hərflərinin (ə, ğ, ı, İ, ö, ş, ç, ü) mövcudluğu.
 Nəticə `audit/pdf-audit.json`-dadır.

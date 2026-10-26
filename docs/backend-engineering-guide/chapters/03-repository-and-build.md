@@ -410,7 +410,29 @@ Oxşar monorepo qurarkən:
 4. `spring-boot-maven-plugin`-i `pluginManagement`-də versiyalayın, `repackage`-i yalnız tətbiq modullarında aktiv edin.
 5. Test plugin-lərində `@{argLine}` istifadə edin ki, JaCoCo agenti itməsin.
 
-## 3.14 Müsahibə sualları
+## 3.14 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★ — `optional` asılılığı öz gözünüzlə görün.**
+`mvn -q -pl auth-service -am dependency:tree -Dincludes=org.springframework.kafka` və eyni əmri `campaign-service` üçün
+işlədin. **Gözlənilən nəticə:** auth-service üçün boş, campaign-service üçün `spring-kafka` görünür (`common/pom.xml`-də
+`optional`).
+
+**T2 ★ — gRPC kodunun generasiyası.** `mvn -pl grpc-contract -am generate-sources` işlədin və
+`CampaignGrpcServiceGrpc.java` faylını `grpc-contract/target/generated-sources/` altında tapın. **Yoxlama:** faylın niyə
+git-də olmadığını və `build-helper-maven-plugin`-in nə üçün lazım olduğunu bir cümlə ilə izah edə bilirsiniz.
+
+**T3 ★★ — Əhatə hesabatı.** JDK 25 və Docker ilə `mvn -pl campaign-service -am verify` işlədin, sonra
+`campaign-service/target/site/jacoco/index.html`-i açın. **Yoxlama:** ən az əhatə olunmuş üç sinfi tapın və 19.5-dəki
+"test edilmir" siyahısı ilə müqayisə edin.
+
+**T4 ★★ — Dockerfile-ı optimallaşdırın.** campaign-service Dockerfile-ını fəsil 18-dəki nümunə ilə yenidən yazın
+(asılılıq qatı, BuildKit keşi, non-root istifadəçi). Bir Java faylını dəyişib image-i iki dəfə qurun. **Yoxlama:**
+ikinci build-in müddəti əvvəlkindən nəzərəçarpacaq dərəcədə qısadır və konteyner root olmayan istifadəçi ilə işləyir
+(`docker exec <konteyner> id`).
+
+## 3.15 Müsahibə sualları
 
 **S1. BOM import ilə `spring-boot-starter-parent` arasındakı fərq nədir?**
 Cavab: Parent POM həm versiyaları (`dependencyManagement`), həm də plugin konfiqurasiyalarını, resurs filtrlənməsini,
@@ -438,7 +460,7 @@ Cavab: Standart Jackson 3-dür (`tools.jackson`), Jackson 2 dəstəyi deprecated
 Bu layihədə Jackson 2 `ObjectMapper` bean-i Eureka klientinin tranzitiv asılılığı sayəsində mövcuddur; bu kövrək
 asılılıqdır.
 
-## 3.15 Xülasə
+## 3.16 Xülasə
 
 - 10 modul: 3 kitabxana (`common`, `security`, `grpc-contract`), 7 tətbiq.
 - Versiyalar dörd BOM ilə idarə olunur; parent POM `spring-boot-starter-parent` deyil.

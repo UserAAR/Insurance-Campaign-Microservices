@@ -442,7 +442,26 @@ səviyyəsində sınansın.
 | Hovuz tükənməsi | `SQLTransientConnectionException: Connection is not available` | Hikari metrikləri (`hikaricp_connections_pending`) | Uzun tranzaksiyaları qısaltmaq, xarici I/O-nu tranzaksiyadan çıxarmaq |
 | Lost update | Ziddiyyətli tarixçə | Tarixçə cədvəli | `@Version` |
 
-## 7.13 Müsahibə sualları
+## 7.13 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★ — SQL-i görün.** `logging.level.org.hibernate.SQL: DEBUG` və `logging.level.org.hibernate.orm.jdbc.bind: TRACE`
+ilə bir kampaniya yaradın. **Yoxlama:** bütün SQL ifadələrini sayın və tarixçə INSERT-indən əvvəlki artıq SELECT-i
+(F14) tapın.
+
+**T2 ★★ — Miqrasiya yazın.** `004-index-history-campaign-id` changeset-i: `campaign_status_histories(campaign_id)`
+indeksi və `rollback` bloku. Tətbiqi işə salıb `psql`-də `\d campaign_status_histories` ilə yoxlayın. **Yoxlama:**
+indeks var; `databasechangelog` cədvəlində yeni sətir görünür.
+
+**T3 ★★ — `Persistable` ilə artıq SELECT-i aradan qaldırın.** `CampaignStatusHistoryEntity`-də `Persistable<UUID>`
+reallaşdırın (`isNew()` yeni yaradılmış obyekt üçün `true`). **Yoxlama:** T1-i təkrarlayın — tarixçə üçün SELECT yoxdur.
+
+**T4 ★★★ — Testlərdə real sxem.** `AbstractTestContainerConfiguration`-da Liquibase-i aktivləşdirin və
+`ddl-auto: validate` qoyun (F27). Repository üzərindən eyni kateqoriya + başlıq + təsvirlə iki kampaniya yazan test
+yazın. **Gözlənilən nəticə:** ikinci yazı partial unique indeksə görə `DataIntegrityViolationException` atır.
+
+## 7.14 Müsahibə sualları
 
 **S1. `persist` və `merge` fərqi nədir və Spring Data hansını nə vaxt çağırır?**
 Cavab: `persist` transient obyekti idarə olunan edir (eyni instans); `merge` obyektin vəziyyətini idarə olunan
@@ -471,7 +490,7 @@ DB constraint-lərinə əsaslanan davranış test edilmir, changelog xətaları 
 Cavab: Hovuzun ölçüsü qədər (standart 10). Qalanları bağlantı gözləyir. Virtual thread-lər bloklanmanı ucuzlaşdırır,
 lakin DB tutumunu artırmır; tranzaksiya daxilində xarici I/O hovuzu tez tükəndirir.
 
-## 7.14 Xülasə
+## 7.15 Xülasə
 
 - İki baza, hər servis öz sxeminə sahibdir; sxem Liquibase ilə, xəritələmə JPA ilə.
 - campaign changelog-u partial unique indeks ilə dublikat yarışını bağlayır; indeks dizaynında artıq və çatışmayan

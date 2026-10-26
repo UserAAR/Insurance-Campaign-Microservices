@@ -240,7 +240,20 @@ classpath-dan asılı olaraq gizli aktivləşir. Kiçik komanda üçün məqbuld
    [NAMƏLUM]
 6. Hədəf yerləşdirmə mühiti (Compose, Kubernetes, bulud)? Eureka və Config Server qərarları bundan asılıdır. [NAMƏLUM]
 
-## 21.12 Müsahibə sualları
+## 21.12 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★★ — Üç düzəliş, üç PR.** P0/P1 mərhələsindən üç tapıntı seçin, hər birini ayrıca branch-da test ilə düzəldin və
+PR təsvirində "əvvəl/sonra" davranışını göstərin. **Yoxlama:** hər PR-də düzəlişi sübut edən ən azı bir test var.
+
+**T2 ★ — ADR yazın.** F09 üçün qərar sənədi: kontekst, variantlar (tranzaksiya daxilində göndəriş, outbox + polling,
+outbox + CDC), qərar və nəticələr (22.5-dəki format). **Yoxlama:** qiymətlər və risklər açıq yazılıb.
+
+**T3 ★ — Risk matrisini yenidən qiymətləndirin.** 21.7-dəki matrisi iki ssenari üçün yenidən qurun: sistem internetə
+açıqdır / yalnız daxili şəbəkədədir. **Yoxlama:** hansı tapıntıların kvadrantı dəyişir və niyə?
+
+## 21.13 Müsahibə sualları
 
 **S1. Kod-review zamanı tapıntıları necə prioritetləşdirirsiniz?**
 Cavab: Təsir × ehtimal; təhlükəsizlik və məlumat bütövlüyü əvvəl, sonra əlçatanlıq, sonra saxlanıla bilənlik. Hər tapıntı
@@ -268,7 +281,7 @@ Cavab: Həcm və komanda ölçüsü baxımından bəli — tək yerləşdirmə, 
 müstəqil yerləşdirmə, fərqli miqyaslama və komanda muxtariyyəti lazım olanda özünü doğruldur. Layihənin məqsədi texnika
 nümayişidir, ona görə seçim kontekstdə başa düşüləndir.
 
-## 21.13 Xülasə
+## 21.14 Xülasə
 
 - 46 tapıntı: 5 təsdiqlənmiş defekt, 21 risk, 6 trade-off (F06 həm risk, həm trade-off kimi baxılır), 14 saxlanıla
   bilənlik, 1 hipotez (F30); F34 risk + hipotezdir.

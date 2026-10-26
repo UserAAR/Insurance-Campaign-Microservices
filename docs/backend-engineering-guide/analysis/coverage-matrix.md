@@ -77,7 +77,7 @@ Cəmi fayl: **178**, ən azı bir fəsildə istinad olunan: **178**.
 | `campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/controller/CampaignController.java` | campaign-service | CampaignController |  | Tətbiq kodu | 02, 04, 05, 06, 08, 10, 20, 25 | Əhatə olunub | — | OK |
 | `campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/domain/Campaign.java` | campaign-service | Campaign |  | Tətbiq kodu | 00, 01, 02, 03, 04, 05, 06, 11, 13, 17, 19, 20, 22, 25 | Əhatə olunub | — | OK |
 | `campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/domain/CampaignCategory.java` | campaign-service | CampaignCategory |  | Tətbiq kodu | 02, 06, 07, 08, 11 | Əhatə olunub | — | OK |
-| `campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/domain/CampaignStatus.java` | campaign-service | CampaignStatus |  | Tətbiq kodu | 02, 06, 07, 11, 13, 21, 22 | Əhatə olunub | — | OK |
+| `campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/domain/CampaignStatus.java` | campaign-service | CampaignStatus |  | Tətbiq kodu | 02, 05, 06, 07, 11, 13, 21, 22 | Əhatə olunub | — | OK |
 | `campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/dto/CampaignHistoryResponse.java` | campaign-service | CampaignHistoryResponse |  | Tətbiq kodu | 06, 13 | Əhatə olunub | — | — |
 | `campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/dto/CampaignPageResponse.java` | campaign-service | CampaignPageResponse |  | Tətbiq kodu | 05, 06, 20, 24 | Əhatə olunub | — | OK |
 | `campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/dto/CampaignResponse.java` | campaign-service | CampaignResponse |  | Tətbiq kodu | 05, 06, 20 | Əhatə olunub | — | — |
@@ -95,14 +95,14 @@ Cəmi fayl: **178**, ən azı bir fəsildə istinad olunan: **178**.
 | `campaign-service/src/test/java/com/casestudy/insurancecampaign/campaign/base/AbstractBaseServiceTest.java` | campaign-service | Test: AbstractBaseServiceTest |  | Test | 19 | Əhatə olunub | — | OK |
 | `campaign-service/src/test/java/com/casestudy/insurancecampaign/campaign/base/AbstractRestControllerTest.java` | campaign-service | Test: AbstractRestControllerTest |  | Test | 19 | Əhatə olunub | — | OK |
 | `campaign-service/src/test/java/com/casestudy/insurancecampaign/campaign/base/AbstractTestContainerConfiguration.java` | campaign-service | Test: AbstractTestContainerConfiguration |  | Test | 07, 13, 15, 19 | Əhatə olunub | — | OK |
-| `campaign-service/src/test/java/com/casestudy/insurancecampaign/campaign/controller/CampaignControllerTest.java` | campaign-service | Test: CampaignControllerTest |  | Test | 08, 19 | Əhatə olunub | — | OK |
-| `campaign-service/src/test/java/com/casestudy/insurancecampaign/campaign/service/CampaignServiceTest.java` | campaign-service | Test: CampaignServiceTest |  | Test | 02, 04, 19 | Əhatə olunub | — | OK |
+| `campaign-service/src/test/java/com/casestudy/insurancecampaign/campaign/controller/CampaignControllerTest.java` | campaign-service | Test: CampaignControllerTest |  | Test | 08, 10, 19 | Əhatə olunub | — | OK |
+| `campaign-service/src/test/java/com/casestudy/insurancecampaign/campaign/service/CampaignServiceTest.java` | campaign-service | Test: CampaignServiceTest |  | Test | 02, 04, 06, 19 | Əhatə olunub | — | OK |
 | `campaign-service/src/test/resources/keys/private.pem` | campaign-service | Test RSA açarı |  | Test | 25 | Əhatə olunub | — | — |
 | `campaign-service/src/test/resources/keys/public.pem` | campaign-service | Test RSA açarı |  | Test | 25 | Əhatə olunub | — | — |
 | `common/pom.xml` | common | Ortaq modulun asılılıqları | spring-kafka optional | Build | 02, 03, 11, 18, 20 | Əhatə olunub | — | OK |
 | `common/src/main/java/com/casestudy/insurancecampaign/common/api/ApiError.java` | common | Xəta cavab zərfi | of(), validation() | HTTP kontrakt | 02, 05, 08, 10, 21, 23 | Əhatə olunub | — | OK |
 | `common/src/main/java/com/casestudy/insurancecampaign/common/api/ApiResponse.java` | common | Uğurlu cavab zərfi | success() | HTTP kontrakt | 02, 04, 05, 08, 12, 13, 20, 21 | Əhatə olunub | — | OK |
-| `common/src/main/java/com/casestudy/insurancecampaign/common/config/KafkaJsonConfiguration.java` | common | Kafka producer (String açar, JSON dəyər) | producerFactory, kafkaTemplate | Kafka şərti konfiqurasiya | 03, 04, 06, 11, 23 | Əhatə olunub | — | OK |
+| `common/src/main/java/com/casestudy/insurancecampaign/common/config/KafkaJsonConfiguration.java` | common | Kafka producer (String açar, JSON dəyər) | producerFactory, kafkaTemplate | Kafka şərti konfiqurasiya | 03, 04, 06, 11, 17, 23 | Əhatə olunub | — | OK |
 | `common/src/main/java/com/casestudy/insurancecampaign/common/config/VirtualThreadConfiguration.java` | common | @EnableAsync + virtual thread executor | applicationTaskExecutor | Asinxron icra | 04, 20 | Əhatə olunub | Trace kontekst ötürülmür (F34) | OK |
 | `common/src/main/java/com/casestudy/insurancecampaign/common/event/CampaignStatusChangedEvent.java` | common | Kampaniya status hadisəsi | record | Kafka mesajı | 02, 06, 11 | Əhatə olunub | Consumer yoxdur (F12) | — |
 | `common/src/main/java/com/casestudy/insurancecampaign/common/event/SlowRequestLogEvent.java` | common | Yavaş sorğu hadisəsi | record | Kafka mesajı | 02, 04, 11, 19, 20 | Əhatə olunub | — | — |
@@ -148,9 +148,9 @@ Cəmi fayl: **178**, ən azı bir fəsildə istinad olunan: **178**.
 | `log-service/Dockerfile` | log-service | Çoxmərhələli image build | maven → amazoncorretto:25 | Deploy | 25 | Əhatə olunub | — | — |
 | `log-service/pom.xml` | log-service | Modul asılılıqları |  | Build | 25 | Əhatə olunub | — | — |
 | `log-service/src/main/java/com/casestudy/insurancecampaign/log/LogServiceApplication.java` | log-service | LogServiceApplication |  | Tətbiq kodu | 25 | Əhatə olunub | — | — |
-| `log-service/src/main/java/com/casestudy/insurancecampaign/log/config/KafkaDlqConfiguration.java` | log-service | KafkaDlqConfiguration |  | Tətbiq kodu | 04, 11, 20, 21 | Əhatə olunub | — | OK |
+| `log-service/src/main/java/com/casestudy/insurancecampaign/log/config/KafkaDlqConfiguration.java` | log-service | KafkaDlqConfiguration |  | Tətbiq kodu | 04, 11, 17, 20, 21 | Əhatə olunub | — | OK |
 | `log-service/src/main/java/com/casestudy/insurancecampaign/log/controller/AuthAuditLogController.java` | log-service | AuthAuditLogController |  | Tətbiq kodu | 02, 08, 10, 12, 20, 25 | Əhatə olunub | — | OK |
-| `log-service/src/main/java/com/casestudy/insurancecampaign/log/controller/SlowRequestLogController.java` | log-service | SlowRequestLogController |  | Tətbiq kodu | 02, 05, 10, 12, 20, 21, 25 | Əhatə olunub | — | OK |
+| `log-service/src/main/java/com/casestudy/insurancecampaign/log/controller/SlowRequestLogController.java` | log-service | SlowRequestLogController |  | Tətbiq kodu | 02, 05, 10, 12, 19, 20, 21, 25 | Əhatə olunub | — | OK |
 | `log-service/src/main/java/com/casestudy/insurancecampaign/log/model/document/AuthAuditLogDocument.java` | log-service | AuthAuditLogDocument |  | Tətbiq kodu | 12, 25 | Əhatə olunub | — | OK |
 | `log-service/src/main/java/com/casestudy/insurancecampaign/log/model/document/SlowRequestDocument.java` | log-service | SlowRequestDocument |  | Tətbiq kodu | 05, 11, 12, 20, 23 | Əhatə olunub | — | OK |
 | `log-service/src/main/java/com/casestudy/insurancecampaign/log/model/dto/request/AuthAuditLogRequest.java` | log-service | AuthAuditLogRequest |  | Tətbiq kodu | 08, 14, 25 | Əhatə olunub | — | OK |
@@ -163,7 +163,7 @@ Cəmi fayl: **178**, ən azı bir fəsildə istinad olunan: **178**.
 | `log-service/src/test/java/com/casestudy/insurancecampaign/log/base/AbstractRestControllerTest.java` | log-service | Test: AbstractRestControllerTest |  | Test | 19 | Əhatə olunub | — | — |
 | `log-service/src/test/java/com/casestudy/insurancecampaign/log/base/AbstractTestContainerConfiguration.java` | log-service | Test: AbstractTestContainerConfiguration |  | Test | 07, 13, 15, 19 | Əhatə olunub | — | — |
 | `log-service/src/test/java/com/casestudy/insurancecampaign/log/controller/AuthAuditLogControllerTest.java` | log-service | Test: AuthAuditLogControllerTest |  | Test | 19 | Əhatə olunub | — | — |
-| `log-service/src/test/java/com/casestudy/insurancecampaign/log/controller/SlowRequestLogControllerTest.java` | log-service | Test: SlowRequestLogControllerTest |  | Test | 05, 19 | Əhatə olunub | — | OK |
+| `log-service/src/test/java/com/casestudy/insurancecampaign/log/controller/SlowRequestLogControllerTest.java` | log-service | Test: SlowRequestLogControllerTest |  | Test | 05, 12, 19 | Əhatə olunub | — | OK |
 | `log-service/src/test/java/com/casestudy/insurancecampaign/log/service/AuthAuditLogServiceTest.java` | log-service | Test: AuthAuditLogServiceTest |  | Test | 19 | Əhatə olunub | — | — |
 | `log-service/src/test/java/com/casestudy/insurancecampaign/log/service/SlowRequestLogConsumerTest.java` | log-service | Test: SlowRequestLogConsumerTest |  | Test | 19 | Əhatə olunub | — | — |
 | `log-service/src/test/resources/keys/private.pem` | log-service | Test RSA açarı |  | Test | 25 | Əhatə olunub | — | — |

@@ -407,7 +407,37 @@ yoxdur — bu, qruplardan daha sadə və tövsiyə olunan yanaşmadır.
 - Atomik invariant (unikallıq, referensial bütövlük) → **həm də** DB constraint-i.
 - İcazə → security (URL və ya metod səviyyəsi).
 
-## 8.11 Müsahibə sualları
+## 8.11 Alternativlər
+
+| Mövzu | Layihədəki seçim | Alternativ | Qiymətləndirmə |
+|---|---|---|---|
+| Xəta formatı | Öz `ApiResponse` / `ApiError` zərfi | RFC 9457 `ProblemDetail` (`spring.mvc.problemdetails.enabled`) | Standart format alətlər və klientlər tərəfindən tanınır; öz zərf isə uğurlu və uğursuz cavabı eyni formada saxlayır |
+| Handler bazası | Sıfırdan `@RestControllerAdvice` + catch-all | `ResponseEntityExceptionHandler`-i genişləndirmək | Framework-un 4xx xəritələri qorunur (F07-nin həlli) |
+| Validasiya yeri | DTO-da Bean Validation + servisdə biznes qaydaları | Domen obyektinin konstruktorunda invariantlar (always-valid domain) | Domen invariantları API-dən asılı olmayaraq qorunur; DTO validasiyası isə klientə sahə səviyyəli xəta verir — ikisi birlikdə ən yaxşısıdır |
+| Xəta ifadəsi | İstisnalar (`BusinessException` iyerarxiyası) | Nəticə tipləri (`Result`/`Either`, sealed interface) | Gözlənilən biznes nəticələri üçün sealed tiplər kodu açıq edir; Spring ekosistemi isə istisnalarla daha rahat işləyir |
+| Qrup validasiyası | Yoxdur | `@Validated(OnCreate.class)` qrupları | Eyni DTO fərqli əməliyyatlarda fərqli qaydalarla işləyəndə |
+| Lokalizasiya | Mesajlar ingiliscədir, kodda sabitdir | `MessageSource` + `messages_az.properties` | Çoxdilli klientlər üçün; `code` sahəsi sabit qalır, mətn dəyişir |
+
+## 8.12 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★ — Səhv girişlər matrisi.** Bunları göndərin və status/gövdəni cədvəldə qeyd edin: qırıq JSON,
+`"category":"HEALTH"`, `/api/v1/campaigns/not-a-uuid`, `PUT /api/v1/campaigns`, mövcud olmayan URL.
+**Gözlənilən nəticə:** əksəriyyəti 500 (F07).
+
+**T2 ★★ — Framework xəritələrini qaytarın.** `GlobalExceptionHandler`-i `ResponseEntityExceptionHandler`-dən törədin
+(və ya `HttpMessageNotReadableException`, `MethodArgumentTypeMismatchException`, `NoResourceFoundException`,
+`HttpRequestMethodNotSupportedException` üçün handler əlavə edin). **Yoxlama:** T1-i təkrarlayın — 400, 400, 400, 405,
+404; hər hal üçün MockMvc testi.
+
+**T3 ★ — Görünməz xətaları görünən edin.** Catch-all handler-ə ERROR log əlavə edin (F38). **Yoxlama:** 500 cavabında
+log-da stack trace və `traceId` var; klientə isə daxili mesaj deyil, ümumi mətn gedir.
+
+**T4 ★★ — Audit sorğusunu validasiya edin.** `AuthAuditLogRequest`-ə `@NotBlank`/`@NotNull` constraint-ləri, controller-ə
+`@Valid` əlavə edin (F39). **Yoxlama:** boş `eventType` ilə sorğu 400 qaytarır və Elasticsearch-ə yazılmır.
+
+## 8.13 Müsahibə sualları
 
 **S1. `@Valid` və `@Validated` fərqi nədir?**
 Cavab: `@Valid` Jakarta standartıdır, kaskad (iç-içə obyekt) validasiyasını və MVC arqument validasiyasını işə salır.
@@ -435,7 +465,7 @@ imkanı. Klientə ümumi mesaj və korrelyasiya id-si (traceId), detallar isə y
 Cavab: Yarış şəraitində yalnız DB atomik zəmanət verir; tətbiq yoxlaması isə yaxşı xəta mesajı və erkən rədd üçündür.
 Bu "müdafiə dərinliyi"dir, mənasız təkrar deyil — şərt odur ki, DB pozuntusu da düzgün xətaya çevrilsin.
 
-## 8.12 Xülasə
+## 8.14 Xülasə
 
 - Validasiyanın yeganə tetikləyicisi `@Valid @RequestBody`-dir; `@Validated` istifadə olunmur.
 - campaign və auth DTO-larında qaydalar DB sütun ölçüləri ilə uyğundur; log-service audit sorğusu validasiyasızdır.

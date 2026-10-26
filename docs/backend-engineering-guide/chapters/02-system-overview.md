@@ -242,7 +242,30 @@ auth-service (9) → bütün sistem üzrə security (10) → asinxron mesajlaşm
 Redis, Spring Cloud, observability, konteynerlər, testlər (11–19) → uçdan-uca axınlar (20) → qiymətləndirmə və dizayn
 (21–22) → production və müsahibə (23–24).
 
-## 2.11 Müsahibə sualları
+## 2.11 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★ — Xəritəni yaddaşdan çəkin.** Kağızda və ya Mermaid-də beş tətbiq servisini, Eureka və Config Server-i,
+PostgreSQL, Redis, Kafka və Elasticsearch-ü, aralarındakı bütün kanalları (REST, gRPC, HTTP, Kafka) çəkin. Sonra 2.5-dəki
+diaqramla müqayisə edin. **Yoxlama:** hər kanalın protokolu və istiqaməti düzgündür: dashboard → campaign (gRPC),
+auth → log (HTTP), campaign və log → Kafka → log-service → Elasticsearch.
+
+**T2 ★ — Sistemi qaldırın.** `docker compose up -d --build`, sonra `docker compose ps`. Eureka UI-də
+(`http://localhost:8761`) hansı servislərin qeydiyyatdan keçdiyini yazın və hər servisin `application.yml`-indəki
+`eureka.client` ayarları ilə müqayisə edin. **Yoxlama:** siyahınız konfiqurasiya ilə üst-üstə düşür.
+
+**T3 ★★ — Status maşınını əl ilə keçin.** `admin` istifadəçisi ilə login olun (şifrə 1.6-da göstərilən changelog-dadır),
+bir `LIFE` və bir `TSS` kampaniyası yaradın, `TSS`-i əvvəlcə approve, sonra deactivate edin və
+`GET /api/v1/campaigns/{id}/history` ilə tarixçəni oxuyun. Rate limit hər marşrut üçün 5 saniyədə bir sorğu buraxır —
+sorğular arasında gözləyin və ya lokal olaraq `RATE_LIMITER_REQUESTED_TOKENS=1` verin. **Gözlənilən nəticə:** `TSS`
+kampaniyasının tarixçəsində üç sətir: `null → PENDING_APPROVAL`, `PENDING_APPROVAL → ACTIVE`, `ACTIVE → DEACTIVE`.
+
+**T4 ★★ — Uğursuzluq cədvəlini sınayın.** `docker compose stop redis`, sonra statistika endpoint-ini və kampaniya
+yaratmanı çağırın; nəticəni 2.9-dakı cədvəllə müqayisə edin, sonra Redis-i qaytarın. **Yoxlama:** fərqləri qeyd edin —
+hər fərq ya kitabdakı proqnozun, ya da sizin mühitinizin xüsusiyyətidir.
+
+## 2.12 Müsahibə sualları
 
 **S1. Bu sistemi 1 dəqiqədə izah edin.**
 Cavab: Sığorta kampaniyalarını idarə edən mikroservis platformasıdır. Klient sorğuları Spring Cloud Gateway-dən
@@ -272,7 +295,7 @@ Eureka, tək Redis). Biznes baxımından api-gateway (bütün trafik) və campai
 gRPC) kritikdir. Redis düşərsə rate limiting söndürülmüş kimi davranır — bu, açıq-aşkar seçilmiş fail-open
 davranışıdır.
 
-## 2.12 Xülasə
+## 2.13 Xülasə
 
 - Sistem kampaniya həyat dövrünü (yaratma → təsdiq → deaktivasiya) və onu dəstəkləyən platforma xidmətlərini
   həyata keçirir.

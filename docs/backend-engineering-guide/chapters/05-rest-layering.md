@@ -358,7 +358,25 @@ Yoxlama siyahısı: resurs adları cəm halda; versiya; hər endpoint üçün ro
 (OpenAPI); səhifələmə DTO-su; sıralama ağ siyahısı; `Location`; standart xəta formatı (Problem Details və ya öz
 formatınız, lakin hər yerdə eyni).
 
-## 5.10 Müsahibə sualları
+## 5.10 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★ — Səhifələmənin sərhədləri.** `GET /api/v1/campaigns?page=0&size=2&sort=createdAt,desc`, sonra `size=5000`
+çağırın. **Yoxlama:** ikinci sorğuda neçə element qayıtdığını və bunun hansı Spring Data xassəsi ilə məhdudlaşdığını
+(`spring.data.web.pageable.max-page-size`) tapın; layihə üçün ağlabatan limit təklif edin.
+
+**T2 ★ — Səhv sıralama sahəsi.** `?sort=nonexistent` göndərin. **Gözlənilən nəticə:** 500 (F07). Düzəliş:
+`PropertyReferenceException` üçün 400 qaytaran handler və onu yoxlayan MockMvc testi.
+
+**T3 ★★ — Status filtri əlavə edin.** `GET /api/v1/campaigns?status=ACTIVE` dəstəyi: repository-də
+`Page<CampaignEntity> findByStatus(CampaignStatus status, Pageable pageable)`, controller-də opsional parametr.
+**Yoxlama:** filtrsiz sorğu əvvəlki kimi işləyir; səhv status dəyəri 400 qaytarır.
+
+**T4 ★★ — Cavab zərfinin miqrasiya planı.** `ApiResponse`/`ApiError`-dan RFC 9457 `ProblemDetail`-ə keçidin planını
+yazın: hansı klientlər təsirlənir, keçid dövründə iki formatı necə saxlamaq olar (`Accept` başlığı, versiyalanmış yol).
+
+## 5.11 Müsahibə sualları
 
 **S1. PUT və PATCH fərqi nədir, `approve` üçün hansı daha uyğundur?**
 Cavab: PUT resursu tam əvəzləyir və idempotentdir; PATCH qismən dəyişiklikdir. `approve` resursun vəziyyətini qayda
@@ -384,7 +402,7 @@ açardan (`WHERE (created_at, id) < (?, ?)`) davam edir — sabit performans, la
 Cavab: Üstünlük — vahid struktur, metadata üçün yer. Çatışmazlıq — HTTP semantikasını təkrarlayır (`success`
 statusdan məlumdur), klient kodunu dərinləşdirir, standart alətlərlə (Problem Details) uyğunluğu azaldır.
 
-## 5.11 Xülasə
+## 5.12 Xülasə
 
 - REST resursları: kampaniya kolleksiyası, alt-resurs tarixçə, hesablanmış statistika, status action endpoint-ləri.
 - Controller yalnız tərcümə edir; qaydalar servisdədir; entity-lər xaricə çıxmır (tarixçə istisnası ilə).

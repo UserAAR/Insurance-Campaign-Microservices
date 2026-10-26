@@ -412,7 +412,27 @@ TLS/mTLS; `discovery:///` + `round_robin`; Resilience4j CircuitBreaker gRPC klie
 [NƏTİCƏ] Bu layihədə yük kiçikdir; gRPC seçimi performansdan çox texnologiya nümayişi və kontrakt-öncəlikli dizayn üçün
 məntiqlidir. Daxili API-nin brauzerdən istifadə edilməməsi və tipli kontrakt gRPC-ni uyğun seçim edir.
 
-## 13.12 Müsahibə sualları
+## 13.12 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★ — Kontraktı kəşf edin.** `grpcurl -plaintext localhost:9090 describe CampaignGrpcService` və mesaj tiplərini
+`describe` ilə açın. **Yoxlama:** çıxış `campaign.proto` ilə eynidir (reflection-in açıq olmasının həm faydası, həm
+riski — fəsil 10, F04).
+
+**T2 ★★ — Status xəritəsi (F19).** campaign-service-də `@GrpcAdvice`: `ResourceNotFoundException → NOT_FOUND`,
+`IllegalArgumentException → INVALID_ARGUMENT`; dashboard-da `StatusRuntimeException`-ı koduna görə 404/400/503-ə
+çevirin. **Yoxlama:** mövcud olmayan id üçün `GET /api/v1/dashboard/campaigns/{id}/history` 404 qaytarır.
+
+**T3 ★★ — Deadline.** `CampaignGrpcClient`-də hər çağırışa `withDeadlineAfter(500, TimeUnit.MILLISECONDS)` əlavə edin;
+`docker compose pause campaign-service` ilə sınayın. **Gözlənilən nəticə:** dashboard yarım saniyədə
+`DEADLINE_EXCEEDED` alır və (T2-dəki xəritə ilə) 503/504 qaytarır, thread asılı qalmır.
+
+**T4 ★★★ — In-process server testi.** Test profilində `grpc.server.in-process-name: test` və
+`grpc.client.campaign-service.address: in-process:test` verib `CampaignGrpcEndpoint` üçün inteqrasiya testi yazın
+(`CampaignService` mock). **Yoxlama:** test şəbəkə portu açmadan işləyir; boş `previousStatus` `""` kimi ötürülür.
+
+## 13.13 Müsahibə sualları
 
 **S1. Protobuf-da sahə nömrələri niyə vacibdir və sahəni necə təhlükəsiz silmək olar?**
 Cavab: Wire formatında sahə adı deyil, nömrəsi yazılır. Nömrəni dəyişmək və ya təkrar istifadə etmək köhnə klientləri
@@ -440,7 +460,7 @@ Cavab: Uzunömürlü HTTP/2 bağlantısı səbəbindən L4 balanslayıcı bağla
 klient tərəfli balans (ad həlli bütün ünvanları qaytarır + `round_robin` siyasəti), ya da L7 proxy (Envoy) istifadə
 olunur. Layihədə static tək ünvan var — balans yoxdur.
 
-## 13.13 Xülasə
+## 13.14 Xülasə
 
 - `campaign.proto` iki unary RPC təyin edir; kod Maven build-də generasiya olunur.
 - Server endpoint REST ilə eyni servis qatını çağırır; klient blocking stub-dır və nəticəni dashboard modelinə tərcümə

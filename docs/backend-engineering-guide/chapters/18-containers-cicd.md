@@ -184,7 +184,24 @@ Docker Hub-dan sonra harada və necə işlədildiyi repozitoriyadan müəyyən e
 4. CI: testlər bir dəfə; Sonar davamlı serverə; Docker build cache; SBOM və image skanı (Trivy/Grype); imzalama (cosign).
 5. CD: mühit başına konfiqurasiya, miqrasiyaların ayrıca addımı, mavi-yaşıl və ya canary deploy, avtomatik rollback.
 
-## 18.8 Müsahibə sualları
+## 18.8 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★ — Asılılıq qrafı.** `docker-compose.yml`-dən bütün `depends_on` əlaqələrini qraf kimi çəkin və hansılarında
+`condition: service_healthy` olduğunu işarələyin. **Yoxlama:** F29-dakı boşluqları qrafda göstərə bilirsiniz.
+
+**T2 ★★ — Tətbiq servisinə healthcheck.** Əvvəlcə image-də hansı alətin olduğunu yoxlayın:
+`docker run --rm amazoncorretto:25 sh -c 'command -v curl wget || true'`. Uyğun alətlə `/actuator/health`-i yoxlayan
+healthcheck yazın və gateway-i `service_healthy` şərtinə bağlayın. **Yoxlama:** `docker compose ps`-də `healthy`.
+
+**T3 ★ — Versiyaları sabitləyin.** `latest` teqlərini konkret versiyalarla əvəz edin (Elasticsearch artıq sabitdir).
+**Yoxlama:** hər seçimi bir cümlə ilə əsaslandırın; test image-ləri ilə uyğunluğu yoxlayın (F28).
+
+**T4 ★★ — CI-ya təhlükəsizlik skanı.** `.github/workflows/ci-cd.yml`-i oxuyun, pipeline-ı diaqram kimi çəkin və image
+qurulduqdan sonra zəiflik skanı (məs. Trivy) addımı əlavə edin. **Yoxlama:** kritik zəiflik olanda pipeline qırmızı olur.
+
+## 18.9 Müsahibə sualları
 
 **S1. Çoxmərhələli Docker build nə qazandırır?**
 Cavab: Build alətləri (Maven, JDK, mənbə kodu) son image-ə düşmür — image kiçik və təhlükəsiz olur; build mühiti
@@ -207,7 +224,7 @@ uğursuz olduqda düşür, ona görə image push edilmir.
 Cavab: Konteyner limitini təyin edib JVM-ə faizlə heap vermək (`-XX:MaxRAMPercentage=70-75`), qalan hissəni metaspace,
 thread stack-ları, direct buffer-lər (Netty, Kafka) üçün saxlamaq; OOMKilled hallarını metriklərlə izləmək.
 
-## 18.9 Xülasə
+## 18.10 Xülasə
 
 - Hər tətbiqin çoxmərhələli Dockerfile-ı var; non-root, healthcheck, layer cache və JVM parametrləri çatışmır.
 - Compose iki variantdadır: tam stek və yalnız infrastruktur; başlanğıc asılılıqlarında sağlamlıq şərtləri və restart

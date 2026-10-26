@@ -280,7 +280,37 @@ public interface SlowRequestLogRepository extends ElasticsearchRepository<SlowRe
 | Dərin səhifə (`page=600&size=20`) | Axtarış | `max_result_window` xətası → 500 | ES xəta mesajı |
 | Yeni yazılan qeyd görünmür | Refresh | Bir saniyəyə qədər gecikmə | `?refresh=wait_for` və ya gözləmə |
 
-## 12.9 Müsahibə sualları
+## 12.9 Alternativlər
+
+| Ehtiyac | Layihədəki seçim | Alternativ | Nə vaxt |
+|---|---|---|---|
+| Log və audit axtarışı | Elasticsearch + Spring Data | OpenSearch (Apache 2.0 lisenziyalı fork) | Lisenziya və ya idarə olunan bulud xidməti (AWS OpenSearch) səbəbindən |
+| Tətbiq logları | ES-ə əl ilə yazılan "yavaş sorğu" sənədləri | Loki (artıq stekdə var), ELK/Elastic Agent | Loglar üçün ayrıca kod yazmaq lazım deyil; yavaş sorğular metrik və trace-lərdən də görünür (fəsil 17) |
+| Analitik sorğular | ES aqreqasiyaları | ClickHouse, TimescaleDB | Böyük həcmli zaman seriyaları və SQL ilə analitika lazım olanda |
+| Sadə mətn axtarışı | — | PostgreSQL full-text (`tsvector`, GIN indeksi) | Ayrı klaster saxlamağa dəyməyən kiçik həcmdə; tranzaksional tutarlılıq da qalır |
+| Klient | Spring Data repository (`save`, `findAll`) | Elasticsearch Java API Client birbaşa, `ElasticsearchOperations` | Mürəkkəb sorğular, aqreqasiyalar, bulk yazı və index idarəsi lazım olanda |
+| Saxlama siyasəti | Yoxdur (F43) | ILM + data stream, və ya indeksin gündəlik rollover-i | İstehsalda həmişə |
+
+## 12.10 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★ — Mapping-i oxuyun.** `curl 'localhost:9200/slow-request-logs/_mapping?pretty'`. **Yoxlama:** hansı sahələrin
+açıq (`occurredAt`), hansılarının dinamik (`text` + `.keyword`) yarandığını cədvəldə qeyd edin.
+
+**T2 ★★ — Aqreqasiya sorğusu.** Son bir saatda orta müddətə görə ən yavaş beş yolu tapan sorğu yazın: `occurredAt`
+üzrə `range` filtri, `path.keyword` üzrə `terms` aqreqasiyası, içində `avg(durationMs)`, nəticə `avg`-yə görə azalan.
+**Yoxlama:** nəticə Prometheus-dakı `http_server_requests` məlumatı ilə təxminən uyğun gəlir.
+
+**T3 ★★ — F42-ni düzəldin.** `SlowRequestLogController`-də `PageRequest.of(page, size, Sort.by(DESC, "occurredAt"))` və
+`page`/`size` validasiyası. **Yoxlama:** `SlowRequestLogControllerTest`-də repository-yə ötürülən `Pageable`-in
+sıralamasını yoxlayan test.
+
+**T4 ★★★ — Saxlama siyasəti (F43).** `slow-request-logs` üçün ILM siyasəti (məs. gündəlik rollover, 14 gündən sonra
+silmə) və index template yazın, `curl` ilə tətbiq edin. **Yoxlama:** `GET _ilm/explain/slow-request-logs*` siyasətin
+tətbiq olunduğunu göstərir.
+
+## 12.11 Müsahibə sualları
 
 **S1. `text` və `keyword` fərqi nədir? `eventType` hansı olmalıdır?**
 Cavab: `text` analiz olunur (tokenlərə bölünür, kiçik hərfə çevrilir) — tam mətn axtarışı üçün; `keyword` olduğu kimi
@@ -306,7 +336,7 @@ Cavab: `search_after` (son sənədin sıralama dəyərləri ilə) + Point-in-Tim
 Cavab: Sənəd id-sini deterministik edərək (hadisə id-si və ya `topic-partition-offset`) — ikinci yazı birincini
 əvəzləyir (idempotent upsert). Random UUID dublikat yaradır.
 
-## 12.10 Xülasə
+## 12.12 Xülasə
 
 - ES tam mətn axtarışı və analitika üçün inverted index əsaslı paylanmış mühərrikdir; near real-time, tranzaksiyasız.
 - log-service iki indeksə yazır: `auth-audit-logs` (açıq, düzgün mapping) və `slow-request-logs` (əsasən dinamik mapping).

@@ -541,7 +541,27 @@ mesaj göndərib DLQ mövzusunu oxumaq. Bu layihədə belə test yoxdur (fəsil 
 | IDE-dən qoşulanda `kafka:19092` tapılmır | Səhv advertised listener | `kafka-broker-api-versions.sh` | `localhost:9092` istifadə |
 | DLQ-ya göndəriş uğursuz | DLQ-da partisiya çatmır | Producer xətası | DLQ mövzusunu eyni partisiya sayı ilə yaratmaq |
 
-## 11.14 Müsahibə sualları
+## 11.14 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★ — Hadisələri canlı izləyin.** `kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic campaign-events
+--from-beginning --property print.key=true` işlədin və kampaniya yaradıb approve edin. **Yoxlama:** hər əməliyyat üçün
+açarı kampaniya id-si olan bir JSON hadisəsi görünür.
+
+**T2 ★★ — Poison pill (F11).** Yalnız lokal mühitdə `kafka-console-producer.sh --topic log-events` ilə `not-json`
+göndərin; log-service loglarına və `kafka-consumer-groups.sh --describe --group log-service` lag-ına baxın.
+**Gözlənilən nəticə:** təkrarlanan deserializasiya xətası, artan lag, boş DLQ. Sonra 11.9-dakı `ErrorHandlingDeserializer`
+konfiqurasiyasını tətbiq edib təkrarlayın — mesaj `log-events.DLQ`-a düşməlidir.
+
+**T3 ★★ — Bloklanmanı ölçün (F10).** `docker compose stop kafka`, sonra birbaşa campaign-service-ə (8082, rate limit-siz)
+kampaniya yaradın və müddəti ölçün. **Gözlənilən nəticə:** təxminən 60 saniyə. `KafkaJsonConfiguration`-da
+`ProducerConfig.MAX_BLOCK_MS_CONFIG` = 2000 verib təkrarlayın.
+
+**T4 ★★★ — Outbox.** `campaign-events` üçün outbox cədvəli və relay yazın (22.6). **Yoxlama:** rollback olunan
+əməliyyat hadisə yaratmır; commit olunan əməliyyat tam bir hadisə yaradır; Kafka dayananda yazılar bloklanmır.
+
+## 11.15 Müsahibə sualları
 
 **S1. Kafka-da sıra zəmanəti haradadır və açar seçimi niyə vacibdir?**
 Cavab: Yalnız partisiya daxilində. Eyni açarlı qeydlər eyni partisiyaya düşür, ona görə bir obyektin hadisələrini
@@ -586,7 +606,7 @@ Cavab: Producer Java sinif adlarını mesaja yazmır — kontrakt dil və paketd
 sındırmır. Bədəli: consumer hədəf tipi özü bilməlidir (`value.default.type`), bir mövzuda bir neçə hadisə tipi
 saxlamaq çətinləşir.
 
-## 11.15 Xülasə
+## 11.16 Xülasə
 
 - Kafka paylanmış jurnaldır: mövzu → partisiya → offset; sıra partisiya daxilindədir; consumer group-lar yükü bölür və
   müstəqil istehlak edir.

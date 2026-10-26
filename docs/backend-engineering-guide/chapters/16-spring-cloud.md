@@ -289,7 +289,26 @@ Yeni gateway üçün yoxlama siyahısı: marşrut başına timeout; retry yalnı
 fallback; vahid xəta formatı (`ErrorWebExceptionHandler`); CORS; etibarlı XFF; marşrut başına rate limit; trace
 yayılması; açıq yolların dəqiq siyahısı.
 
-## 16.10 Müsahibə sualları
+## 16.10 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★ — Reyestri oxuyun.** `curl -H 'Accept: application/json' localhost:8761/eureka/apps`. **Yoxlama:**
+campaign-service instansının IP, port, status və `instanceId`-ni tapın və `eureka.instance` ayarları ilə müqayisə edin.
+
+**T2 ★★ — İnstansın həyat dövrü.** `docker compose stop campaign-service`, sonra gateway marşrutunu hər 5 saniyədən bir
+çağırın və cavabları vaxtı ilə yazın; servisi qaytarıb eyni ölçməni edin. **Yoxlama:** ölçdüyünüz müddəti 16.3-dəki
+30/90 saniyəlik intervallarla izah edin.
+
+**T3 ★★ — Gateway timeout-u.** `spring.cloud.gateway.server.webflux.httpclient.response-timeout: 5s` (prefiks SCG 5.0.2
+mənbəsindən yoxlanılıb). `docker compose pause campaign-service` ilə sınayın. **Gözlənilən nəticə:** 5 saniyədən sonra
+504, sonsuz gözləmə yoxdur.
+
+**T4 ★★ — Config Server əlçatmaz olanda (F32).** `config-server/src/main/resources/config/application.yml`-i oxuyun,
+config-server-i dayandırıb log-service-i yeni consumer group adı ilə başladın. **Yoxlama:** consumer-in köhnə mesajları
+oxuyub-oxumadığını izah edin (`auto-offset-reset`).
+
+## 16.11 Müsahibə sualları
 
 **S1. Gateway-də GlobalFilter və GatewayFilter fərqi nədir?**
 Cavab: GatewayFilter konkret marşruta (və ya `default-filters` ilə hamısına) konfiqurasiya ilə bağlanır; GlobalFilter
@@ -316,7 +335,7 @@ marşrutlara da təsir edə bilər. Timeout uğursuzluğu lokallaşdırır.
 Cavab: Kubernetes-də Service DNS (`http://campaign-service:8082`), ConfigMap/Secret, Ingress və ya Gateway API; və ya
 sadə Compose-da static DNS adları (layihədə dashboard və auth onsuz da belə edir).
 
-## 16.11 Xülasə
+## 16.12 Xülasə
 
 - SCG WebFlux: 8 marşrut, default rate limit, iki layihə qlobal filtri; timeout, retry və CB marşrutlarda yoxdur.
 - Eureka bütün servislərin reyestridir, lakin yalnız gateway kəşfdən istifadə edir; health check inteqrasiyası yoxdur.

@@ -368,7 +368,29 @@ private JwtAuthenticationConverter rolesConverter() {
 
 Gateway üçün analoji: `ServerHttpSecurity.oauth2ResourceServer(o -> o.jwt(...))` və ya `TokenRelay` filtri.
 
-## 10.11 Müsahibə sualları
+## 10.11 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★ — JWT-ni açın.** Login cavabındakı access token-i nöqtələrə görə bölün, header və payload-u base64url ilə
+deşifrə edin. **Yoxlama:** `alg` = RS256, `iss`, `sub`, `roles`, `exp` dəyərlərini tapın. Token-i heç bir ictimai yerə
+yapışdırmayın.
+
+**T2 ★ — İki 401-i müqayisə edin.** Token olmadan gateway-ə (8080) və birbaşa campaign-service-ə (8082) sorğu göndərin;
+sonra birbaşa 8082-yə zibil token göndərin. **Gözlənilən nəticə:** gateway boş gövdəli 401, servis `ApiError` JSON-u
+qaytarır; zibil token üçün cavabı qeyd edin və 8.6-dakı F08 təhlili ilə müqayisə edin.
+
+**T3 ★★ — F04-ü öz gözünüzlə görün.** `grpcurl -plaintext localhost:9090 list`, sonra
+`grpcurl -plaintext localhost:9090 CampaignGrpcService/GetCampaignStatistics`. **Gözlənilən nəticə:** hər ikisi heç bir
+token olmadan işləyir — net.devh reflection servisi standart olaraq aktivdir və `grpc-services` classpath-dadır.
+Düzəliş variantları: 9090-u Compose-da xaricə açmamaq, JWT yoxlayan server interceptor, mTLS.
+
+**T4 ★★★ — Resource server-ə keçid.** `JwtAuthenticationFilter`-i `oauth2ResourceServer().jwt()` ilə əvəz edin
+(22.6): `spring.security.oauth2.resourceserver.jwt.public-key-location` və `roles` claim-i üçün
+`JwtAuthenticationConverter`. **Yoxlama:** `CampaignControllerTest` dəyişmədən yaşıl qalır, etibarsız token isə
+düzgün 401 verir.
+
+## 10.12 Müsahibə sualları
 
 **S1. Niyə mikroservislərdə RS256 HS256-dan üstündür?**
 Cavab: HS256-da yoxlayan hər servis imzalaya da bilər; sirr bütün servislərdə olmalıdır. RS256-da yalnız auth-service
@@ -397,7 +419,7 @@ Cavab: Şəbəkə izolyasiyası, mTLS (kanal səviyyəsində servis identifikasi
 (net.devh-də `GrpcAuthenticationReader` + `AuthenticationManager` və ya xüsusi `ServerInterceptor`), metod səviyyəli
 icazələr.
 
-## 10.12 Xülasə
+## 10.13 Xülasə
 
 - RS256 JWT: auth-service imzalayır, digərləri public key ilə lokal yoxlayır.
 - Servlet servisləri ortaq `security` modulundan `SecurityFilterChain` + `JwtAuthenticationFilter` + method security

@@ -311,7 +311,37 @@ trace backend-dən (TraceQL `duration > X`) alınır.
 - Loki label-ları: yalnız aşağı kardinallıqlı (`service`, `level`, `env`).
 - Actuator-u ayrı port və şəbəkə ilə qorumaq.
 
-## 17.10 Müsahibə sualları
+## 17.10 Alternativlər
+
+| Qat | Layihədəki seçim | Alternativ | Qeyd |
+|---|---|---|---|
+| Metrik toplama | Prometheus pull (`/actuator/prometheus`) | OTLP push (Micrometer OTLP registry → Collector) | Layihədə OTLP metrik ixracı qəsdən söndürülüb; bir protokol (OTLP) hər şey üçün sadələşdirir |
+| Trace backend | Grafana Tempo | Jaeger, Zipkin, bulud APM (Datadog, New Relic, Dynatrace) | Tempo obyekt saxlama üzərində ucuzdur; APM-lər hazır dashboard və alert verir, lakin bahadır |
+| Log backend | Loki + Promtail (fayldan) | ELK/OpenSearch, Grafana Alloy (Promtail-in davamçısı), stdout + konteyner log sürücüsü | Konteyner mühitində fayl yerinə stdout standartdır |
+| İnstrumentasiya | Micrometer Observation + OTel bridge (kodda) | OpenTelemetry Java agent (`-javaagent`, kod dəyişmədən) | Agent daha çox kitabxananı avtomatik əhatə edir; Micrometer isə Spring ilə daha sıx inteqrasiyadır |
+| Sampling | 100% (`probability: 1.0`) | Tail-based sampling (Collector-da) | İstehsalda xətalı və yavaş trace-ləri saxlayıb qalanını atmaq üçün |
+| Yavaş sorğu jurnalı | Xüsusi filtr → Kafka → ES | `http_server_requests` histogramları + trace exemplar-ları | Ayrıca pipeline yaratmadan eyni sual cavablanır (F25) |
+
+## 17.11 Praktiki tapşırıqlar
+
+Tapşırıqları öz fork-unuzda, ayrıca branch-da edin. Çətinlik: ★ — 30 dəqiqəyə qədər, ★★ — bir neçə saat, ★★★ — təxminən bir gün. "Gözlənilən nəticə" koddan çıxardığım proqnozdur; sizdə fərqli çıxarsa, səbəbini tapmaq tapşırığın ən dəyərli hissəsidir.
+
+**T1 ★ — Bir sorğunu üç siqnalla izləyin.** Gateway-dən kampaniya yaradın; Grafana Explore → Tempo-da trace-i tapın,
+`traceId`-ni kopyalayın, Loki-də `{trace_id="<traceId>"}` ilə logları, Elasticsearch-də eyni `traceId` ilə yavaş sorğu
+sənədini tapın. **Yoxlama:** trace, log və sənəd eyni sorğuya aiddir.
+
+**T2 ★★ — p95 gecikmə.** `management.metrics.distribution.percentiles-histogram.http.server.requests: true` əlavə edin
+və PromQL yazın: `histogram_quantile(0.95, sum by (uri, le) (rate(http_server_requests_seconds_bucket[5m])))`.
+**Yoxlama:** ən yavaş endpoint ES-dəki yavaş sorğu jurnalı ilə uyğun gəlir.
+
+**T3 ★★ — Kardinallığı azaldın (F24).** Promtail-də `labels` mərhələsindən `trace_id` və `span_id`-ni çıxarın. **Yoxlama:**
+`{service="campaign-service"} |= "<traceId>"` sorğusu hələ də işləyir, Loki-dəki axın (stream) sayı isə azalır.
+
+**T4 ★★★ — Trace-i Kafka-dan keçirin.** `KafkaJsonConfiguration`-da `kafkaTemplate.setObservationEnabled(true)`,
+`KafkaDlqConfiguration`-da `factory.getContainerProperties().setObservationEnabled(true)`. **Yoxlama:** Tempo-da
+log-service consumer span-ı campaign-service sorğusunun trace-inə bağlanır.
+
+## 17.12 Müsahibə sualları
 
 **S1. Metrik, log və trace fərqi və hər birinin xərci?**
 Cavab: Metrik — aqreqat ədədlər, ucuz, uzunmüddətli saxlanılır, "nə qədər" sualına cavab. Log — diskret hadisələr,
@@ -338,7 +368,7 @@ bağlayır. Spring Kafka-da `observationEnabled`. Layihədə bu yoxdur — trace
 Cavab: Backend müstəqilliyi, batch/retry, sampling (xüsusilə tail sampling), atributların zənginləşdirilməsi və ya
 təmizlənməsi (PII), bir neçə backend-ə eyni anda göndərmə, tətbiq konfiqurasiyasının sadələşməsi.
 
-## 17.11 Xülasə
+## 17.13 Xülasə
 
 - Metriklər Prometheus ilə pull, trace-lər OTLP/gRPC → Collector → Tempo, loglar fayl → Promtail → Loki; Grafana hamısını
   traceId ilə əlaqələndirir.

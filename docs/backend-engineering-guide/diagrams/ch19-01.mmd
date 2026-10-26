@@ -1,0 +1,17 @@
+%% caption: Test qatları və baza siniflər (hər tətbiq modulunda eyni quruluş)
+flowchart LR
+    subgraph U["Unit (Mockito)"]
+        direction TB
+        BS["AbstractBaseServiceTest<br/>LENIENT"] --> ST["AuthServiceTest<br/>CampaignServiceTest<br/>CampaignGrpcClientTest ..."]
+    end
+    subgraph I["İnteqrasiya (konteynerlər)"]
+        direction TB
+        D[(Docker)] --> TC["AbstractTestContainerConfiguration<br/>PostgreSQL · Kafka · ES"]
+        TC --> RC["AbstractRestControllerTest<br/>MockMvc"]
+        RC --> CT["CampaignControllerTest<br/>DashboardControllerTest<br/>AuthAuditLogControllerTest ..."]
+    end
+    subgraph X["Yoxdur (F33)"]
+        direction TB
+        G[Gateway testləri] ~~~ K["Kafka → ES uçdan-uca"] ~~~ P[Kontrakt testləri]
+    end
+    U ~~~ I ~~~ X
