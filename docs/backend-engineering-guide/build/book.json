@@ -21,9 +21,22 @@
     "pdfName": "Mikroservislerin-Anatomiyasi-AAR.pdf",
     "coverPng": "Mikroservislerin-Anatomiyasi-AAR-cover.png",
     "colophon": [
-      "Üz qabığı haqqında: üz qabığındakı canlı bal arısıdır (Apis mellifera). Arı koloniyası mikroservis sisteminin metaforasıdır — hər hüceyrə kiçik və müstəqildir, bütöv isə aydın kontraktlar, siqnallar və bölüşdürülmüş məsuliyyət sayəsində işləyir. Anatomik göstəricilər (A–E) kitabın əsas qatlarına uyğundur: gateway, servislər, hadisələr, təhlükəsizlik və müşahidə.",
+      "Üz qabığı haqqında: üz qabığında XIX əsr elmi atlaslarının üslubunda çəkilmiş bal arısı (Apis mellifera) var. Arı koloniyası mikroservis sisteminin metaforasıdır — hər hüceyrə kiçik və müstəqildir, bütöv isə aydın kontraktlar, siqnallar və bölüşdürülmüş məsuliyyət sayəsində işləyir. Lövhədəki A–F göstəriciləri sistemin qatlarına uyğundur: bığcıqlar — API Gateway, gözlər — təhlükəsizlik, döş — servislər, qanadlar — inteqrasiya, qarın — data, tüklər — müşahidə. Bütün qrafika vektordur və kitabın build skripti ilə koddan qurulur.",
       "Kitab Markdown mənbələrindən pandoc və Chromium ilə yığılıb. Mətn Noto Serif və Noto Sans, kod JetBrains Mono şrifti ilə (SIL Open Font License) verilib; diaqramlar Mermaid ilə çəkilib.",
       "Kitabdakı kod nümunələri UserAAR/Insurance-Campaign-Microservices repozitoriyasından götürülüb və hər biri fayl:sətir istinadı ilə yoxlanıla bilər. Tövsiyələri öz mühitinizdə tətbiq etməzdən əvvəl yoxlayın."
+    ],
+    "coverTopics": [
+      "Spring Boot 4",
+      "Spring Cloud",
+      "PostgreSQL",
+      "Kafka",
+      "gRPC",
+      "Elasticsearch",
+      "Redis",
+      "JWT · RS256",
+      "Resilience4j",
+      "OpenTelemetry",
+      "Testcontainers"
     ]
   },
   "front": [
