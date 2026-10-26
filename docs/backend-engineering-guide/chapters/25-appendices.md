@@ -112,7 +112,7 @@ Kontrakt: `grpc-contract/src/main/proto/campaign.proto:8-9`.
 ## 25.3 Konfiqurasiya və mühit dəyişənləri arayışı
 
 Aşağıdakı cədvəl `*/src/main/resources/**/*.yml` fayllarındakı `${DƏYİŞƏN:standart}` yer tutucularından avtomatik
-çıxarılıb. Şifrələrin standart dəyərləri **redaktə olunub** — onlar repozitoriyada mövcuddur (F22), lakin bələdçidə təkrar
+çıxarılıb. Şifrələrin standart dəyərləri **redaktə olunub** — onlar repozitoriyada mövcuddur (F22), lakin kitabda təkrar
 edilmir.
 
 | Dəyişən | Servislər | Standart dəyər |
@@ -163,7 +163,7 @@ təkrarlanan olduğu üçün fəsillərdə ayrıca təhlil edilməyib; onların 
 | `auth-service/src/main/java/com/casestudy/insurancecampaign/auth/model/enums/UserStatus.java` | `ACTIVE`, `PASSIVE`, `DELETED` | Kod yalnız `ACTIVE` təyin edir; statusu dəyişən endpoint yoxdur — "User is not active" yolu yalnız DB-də əl ilə dəyişiklikdən sonra mümkündür |
 | `auth-service/src/main/java/com/casestudy/insurancecampaign/auth/repository/AppUserRepository.java` | `findByUsername`, `findByEmail`, `existsByUsername`, `existsByEmail` | Törədilmiş sorğular (fəsil 7.9) |
 | `auth-service/src/main/java/com/casestudy/insurancecampaign/auth/repository/PasswordResetTokenRepository.java` | `findByTokenHash` | Hash üzrə axtarış; unikal indeksə əsaslanır |
-| `auth-service/src/main/resources/keys/public.pem` | auth-service-in öz public açarı (PEM) | Məzmunu bələdçidə təkrar edilmir |
+| `auth-service/src/main/resources/keys/public.pem` | auth-service-in öz public açarı (PEM) | Məzmunu kitabda təkrar edilmir |
 | `campaign-service/src/test/resources/keys/private.pem`, `campaign-service/src/test/resources/keys/public.pem`, `dashboard-service/src/test/resources/keys/private.pem`, `dashboard-service/src/test/resources/keys/public.pem`, `log-service/src/test/resources/keys/private.pem`, `log-service/src/test/resources/keys/public.pem` | Testlərdə real RS256 token yaratmaq üçün açar cütləri | Yalnız test üçündür; məzmunu təkrar edilmir. İstehsal açarı ilə eyni olmamalıdır |
 | `dashboard-service/pom.xml` | `common`, `security`, `grpc-contract`, gRPC kitabxanaları, `grpc-client-spring-boot-starter`, web, Eureka, actuator, OTel, springdoc; testdə `postgresql` | Kafka yoxdur → yavaş sorğu filtri aktiv deyil |
 | `discovery-server/pom.xml` | `spring-cloud-starter-netflix-eureka-server`, actuator, Prometheus, OTel bridge + OTLP exporter | `common`-dan asılı deyil |
@@ -193,10 +193,10 @@ təkrarlanan olduğu üçün fəsillərdə ayrıca təhlil edilməyib; onların 
 
 ## 25.6 Audit xülasəsi
 
-Bələdçinin necə yoxlandığı `audit/audit-report.md`-də ətraflı təsvir olunub. Qısaca:
+Kitabı necə yoxladığımı `audit/audit-report.md`-də ətraflı təsvir etmişəm. Qısaca:
 
 - **Audit A (məzmun tamlığı):** tapşırıqda tələb olunan bütün bölmələrin (texnologiya fəsilləri, iş axınları, dizayn
-  bələdçisi, istehsal mühəndisliyi, qiymətləndirmə, əhatə matrisi, diaqramlar, müsahibə hazırlığı) mövcudluğu
+  fəsli, istehsal mühəndisliyi, qiymətləndirmə, əhatə matrisi, diaqramlar, müsahibə hazırlığı) mövcudluğu
   yoxlanılıb.
 - **Audit B (texniki dəqiqlik):** `build/verify_refs.py` bütün `fayl:sətir` istinadlarını (faylın mövcudluğu, sətir
   aralığı) və bütün kod çıxarışlarını (sətirlərin mənbədə ardıcıl olaraq mövcudluğu) avtomatik yoxlayır; nəticə

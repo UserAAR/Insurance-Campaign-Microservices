@@ -205,6 +205,22 @@ section.cover .subtitle { font-size: 14pt; color: var(--muted); margin-bottom: 2
 section.cover .meta { font-family: 'Guide Sans', 'DejaVu Sans', sans-serif; font-size: 9pt; color: var(--muted); border-top: 1pt solid var(--rule); padding-top: 10pt; }
 section.cover .meta p { text-align: left; margin: 2pt 0; }
 
+/* Titul səhifəsi və nəşr məlumatı (üz qabığı ayrıca render olunur) */
+section.title-page { justify-content: flex-start; padding-top: 55mm; box-sizing: border-box; }
+section.title-page h1.title { font-size: 34pt; margin: 12pt 0 10pt; }
+section.title-page .subtitle { font-style: italic; margin-bottom: 0; }
+section.title-page .author { margin-top: 70mm; font-family: 'Guide Sans', 'DejaVu Sans', sans-serif; font-weight: 700;
+  font-size: 22pt; letter-spacing: 6pt; color: var(--ink); border-top: 2pt solid #e2a62f; padding-top: 8pt; width: 60mm; }
+section.title-page .edition { margin-top: 4pt; font-family: 'Guide Sans', 'DejaVu Sans', sans-serif; font-size: 9pt;
+  color: var(--muted); letter-spacing: 1pt; }
+section.copyright-page { break-before: page; page-break-before: always; height: 250mm; box-sizing: border-box; display: flex;
+  flex-direction: column; justify-content: flex-end; font-size: 8.5pt; color: var(--muted); }
+section.copyright-page p { text-align: left; margin: 2pt 0; }
+section.copyright-page .cp-title { font-weight: 700; font-size: 11pt; color: var(--ink); margin-bottom: 2pt; }
+section.copyright-page .meta { margin-top: 8pt; padding-top: 8pt; border-top: 0.6pt solid var(--rule);
+  font-family: 'Guide Sans', 'DejaVu Sans', sans-serif; font-size: 8pt; }
+section.copyright-page .colophon { margin-top: 6pt; font-style: italic; }
+
 /* Mündəricat */
 nav.toc { break-before: page; page-break-before: always; }
 nav.toc h1 { margin-bottom: 10pt; }

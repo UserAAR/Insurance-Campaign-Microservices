@@ -127,7 +127,7 @@ Cəmi izlənən fayl: **178**; ən azı bir fəsildə istinad olunan: **178**; s
 | `pom.xml` | Modul asılılıqları | 03, 07, 16, 18 | OK |
 | `main: campaign/CampaignServiceApplication.java` | CampaignServiceApplication | 03, 04, 06, 15, 22 | OK |
 | `main: campaign/controller/CampaignController.java` | CampaignController | 02, 04, 05, 06, 08, 10, 20, 25 | OK |
-| `main: campaign/domain/Campaign.java` | Campaign | 01, 02, 03, 04, 05, 06, 11, 13, 17, 19, 20, 22, 25 | OK |
+| `main: campaign/domain/Campaign.java` | Campaign | 00, 01, 02, 03, 04, 05, 06, 11, 13, 17, 19, 20, 22, 25 | OK |
 | `main: campaign/domain/CampaignCategory.java` | CampaignCategory | 02, 06, 07, 08, 11 | OK |
 | `main: campaign/domain/CampaignStatus.java` | CampaignStatus | 02, 06, 07, 11, 13, 21, 22 | OK |
 | `main: campaign/dto/CampaignHistoryResponse.java` | CampaignHistoryResponse | 06, 13 | — |
@@ -219,7 +219,7 @@ Cəmi izlənən fayl: **178**; ən azı bir fəsildə istinad olunan: **178**; s
 | Fayl | Məsuliyyət | Fəsillər | Yoxlama |
 |------------------------------------|------------------------------|------------------------|----------|
 | `pom.xml` | protoc + grpc-java generasiyası | 03, 18 | OK |
-| `src/main/proto/campaign.proto` | gRPC kontraktı | 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 | OK |
+| `src/main/proto/campaign.proto` | gRPC kontraktı | 00, 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 | OK |
 
 ### log-service
 

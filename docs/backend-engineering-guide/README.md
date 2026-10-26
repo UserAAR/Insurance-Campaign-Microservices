@@ -1,14 +1,20 @@
-# Insurance Campaign Microservices — Backend mühəndislik bələdçisi (AZ)
+# Mikroservislərin Anatomiyası
 
-Bu qovluq repozitoriyaya əsaslanan, Azərbaycan dilində yazılmış backend mühəndislik bələdçisinin redaktə oluna bilən
-mənbələrini, build alətlərini, analiz və audit nəticələrini saxlayır. Tətbiqin mənbə kodu dəyişdirilməyib.
+**Java 25 və Spring Boot 4 ilə real backend sistemini daxildən öyrənmək** — müəllif: **AAR**
 
-**Hazır PDF:** `output/Insurance-Campaign-Backend-Engineering-Guide-AZ.pdf`
+Bu qovluqda *Insurance Campaign Microservices* repozitoriyası üzərində qurulmuş, Azərbaycan dilində yazılmış
+kitabın redaktə oluna bilən mənbələri, üz qabığı, build alətləri, analiz və audit nəticələri saxlanılır. Tətbiqin
+mənbə kodu dəyişdirilməyib.
+
+- **Kitab (PDF):** `output/Mikroservislerin-Anatomiyasi-AAR.pdf`
+- **Üz qabığı (PNG, 2480 × 3508):** `output/Mikroservislerin-Anatomiyasi-AAR-cover.png`
+- **Üz qabığının vektor mənbəyi:** `cover/cover.svg` (`build/cover.py` ilə yaradılır)
 
 ## Quruluş
 
 | Yol | Məzmun |
 |---|---|
+| `chapters/00-preface.md` | Ön söz (müəllifin dilindən) |
 | `chapters/01-…25-*.md` | Fəsillər (Markdown, redaktə olunur) |
 | `chapters/26-coverage-matrix.md` | `build/coverage.py` tərəfindən **yaradılır** — əl ilə redaktə etməyin |
 | `analysis/00-repository-inventory.md` | Fayl inventarı, versiyalar, modullar, README ilə kod arasında fərqlər |
@@ -20,7 +26,8 @@ mənbələrini, build alətlərini, analiz və audit nəticələrini saxlayır. 
 | `diagrams/rendered/*.svg` | Render olunmuş diaqramlar (keş; mənbə dəyişəndə yenilənir) |
 | `audit/audit-report.md` | Audit A/B/C hesabatı, düzəlişlər və məhdudiyyətlər |
 | `audit/verify-refs.json`, `audit/pdf-audit.json` | Avtomatik yoxlamaların maşın oxunan nəticələri |
-| `build/` | Build və yoxlama skriptləri, stil, şriftlər |
+| `cover/cover.svg` | Üz qabığı (elmi qravüra üslubunda bal arısı, pətək; koddan qurulur) |
+| `build/` | Build və yoxlama skriptləri, stil, şriftlər; `cover.py`, `render_cover.mjs`, `assemble.py` üz qabığı üçündür |
 
 ## Tələblər
 
@@ -40,14 +47,18 @@ python3 build/verify_refs.py
 # 2. Əhatə matrisini və 26-cı fəsli yenilə
 python3 build/coverage.py
 
-# 3. PDF-i qur (Mermaid → SVG, pandoc → HTML, Chromium → PDF; mündəricat səhifələri iki keçidlə hesablanır)
+# 3. PDF-i qur (Mermaid → SVG, pandoc → HTML, Chromium → PDF; mündəricat səhifələri iki keçidlə hesablanır;
+#    sonda üz qabığı render olunur və assemble.py ilə birinci səhifəyə əlavə edilir)
 NODE_PATH=$(npm root -g) node build/build.mjs
 
 # 4. PDF bütövlüyünü yoxla (Audit C): mündəricat səhifələri, altbilgi, şriftlər, boş səhifələr, simvollar
 python3 build/audit_pdf.py
 
 # Vizual yoxlama üçün seçilmiş səhifələri PNG-yə çevirmək
-python3 build/render_pages.py output/Insurance-Campaign-Backend-Engineering-Guide-AZ.pdf /tmp/pages 1-5,100 1.0
+python3 build/render_pages.py output/Mikroservislerin-Anatomiyasi-AAR.pdf /tmp/pages 1-5,100 1.0
+
+# Yalnız üz qabığını yeniləmək (SVG + PNG)
+python3 build/cover.py && NODE_PATH=$(npm root -g) node build/render_cover.mjs
 ```
 
 Alternativ kitab faylı: `BOOK_JSON=/yol/book.json node build/build.mjs` (məs. yalnız bir neçə fəsillə sürətli önizləmə).

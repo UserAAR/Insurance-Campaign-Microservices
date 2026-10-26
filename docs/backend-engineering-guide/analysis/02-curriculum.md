@@ -7,7 +7,7 @@ sonra bunları birləşdirən uçdan-uca axınlar, qiymətləndirmə, dizayn və
 
 | Hissə | Fəsil | Fayl | Asılı olduğu fəsillər | Əsas repozitoriya komponentləri |
 |---|---|---|---|---|
-| I. Sistemi anlamaq | 1. Bələdçidən istifadə | `01-how-to-use.md` | — | README, inventar |
+| I. Sistemi anlamaq | 1. Kitabı necə oxumalı | `01-how-to-use.md` | — | README, inventar |
 | | 2. Sistemin biznes və arxitektura xəritəsi | `02-system-overview.md` | 1 | bütün servislər, compose |
 | | 3. Repozitoriya, Maven və build | `03-repository-and-build.md` | 2 | kök və modul `pom.xml`, Dockerfile-lar |
 | II. Təməllər | 4. Java 25 və Spring Boot 4 təməlləri | `04-java-spring-foundations.md` | 3 | `common/config`, `security`, `*Application.java` |

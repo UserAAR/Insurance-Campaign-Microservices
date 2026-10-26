@@ -7,7 +7,8 @@ Yoxlanılır:
   3. Boş və ya demək olar ki, boş səhifələr (mətn yoxdur və şəkil/vektor yoxdur).
   4. Şriftlərin hamısının PDF-ə daxil edilməsi (FontFile*).
   5. Əvəzedici simvollar (U+FFFD) və Azərbaycan hərflərinin mətn qatında mövcudluğu.
-  6. Hər səhifədə altbilgi nömrəsi ("N / CƏMİ").
+  6. Hər səhifədə altbilgi nömrəsi ("N / CƏMİ"). Üz qabığı nömrələnmir: o, PDF-in birinci səhifəsidir və
+     altbilgisi yoxdur; əsas mətnin nömrələri ondan sonra 1-dən başlayır (səhifə etiketləri ilə uyğun).
 
 İstifadə: python3 build/audit_pdf.py [pdf] [toc-pages.json]
 Nəticə: audit/pdf-audit.json; xəta olarsa çıxış kodu 1.
@@ -57,8 +58,9 @@ def fonts_of(page):
 
 
 def main():
-    pdf = sys.argv[1] if len(sys.argv) > 1 else os.path.join(
-        GUIDE, "output", "Insurance-Campaign-Backend-Engineering-Guide-AZ.pdf")
+    with open(os.path.join(HERE, "book.json"), encoding="utf-8") as f:
+        meta = json.load(f)["meta"]
+    pdf = sys.argv[1] if len(sys.argv) > 1 else os.path.join(GUIDE, "output", meta["pdfName"])
     toc_path = sys.argv[2] if len(sys.argv) > 2 else os.path.join(HERE, ".work", "toc-pages.json")
     reader = PdfReader(pdf)
     total = len(reader.pages)
@@ -67,6 +69,14 @@ def main():
 
     outline = []
     walk_outline(reader.outline, outline)
+
+    # Üz qabığı: birinci səhifədə altbilgi yoxdursa, ikincidə isə "1 / N" varsa, offset = 1.
+    first_footer = re.search(r"\b1\s*/\s*\d+\b", texts[1]) if total > 1 else None
+    offset = 1 if first_footer and not re.search(r"\b\d+\s*/\s*\d+\b", texts[0]) else 0
+    body_total = total - offset
+    labels = list(reader.page_labels) if offset else []
+    if offset and labels[:2] != ["Üz qabığı", "1"]:
+        errors.append(f"Səhifə etiketləri gözləniləndən fərqlidir: {labels[:3]}")
 
     # 2. Mündəricat səhifələri
     toc_checked = 0
@@ -77,7 +87,7 @@ def main():
         if not str(page).isdigit():
             errors.append(f"Mündəricat: səhifə nömrəsi yoxdur: {item['title']}")
             continue
-        idx = int(page) - 1
+        idx = int(page) - 1 + offset
         title = squash(item["title"])
         # Başlıq uzun olduqda sətirlərə bölünə bilər; ilk 24 simvol kifayətdir.
         needle = title[:24]
@@ -89,7 +99,7 @@ def main():
     # 3. Boş səhifələr
     blank = []
     for i, page in enumerate(reader.pages):
-        body = re.sub(r"Insurance Campaign Microservices.*?\d+\s*/\s*\d+", "", texts[i], flags=re.S).strip()
+        body = re.sub(re.escape(meta["footer"]) + r".*?\d+\s*/\s*\d+", "", texts[i], flags=re.S).strip()
         res = page.get("/Resources") or {}
         has_xobject = "/XObject" in res
         content = page.get_contents()
@@ -118,13 +128,16 @@ def main():
         warnings.append(f"Mətn qatında tapılmayan hərflər: {missing_letters}")
 
     # 6. Altbilgi
-    no_footer = [i + 1 for i in range(1, total) if not re.search(rf"\b{i + 1}\s*/\s*{total}\b", texts[i])]
+    no_footer = [i + 1 for i in range(offset, total)
+                 if not re.search(rf"\b{i + 1 - offset}\s*/\s*{body_total}\b", texts[i])]
     if no_footer:
         errors.append(f"Altbilgi nömrəsi olmayan səhifələr: {no_footer[:20]}")
 
     result = {
         "pdf": os.path.relpath(pdf, GUIDE),
         "pages": total,
+        "cover_pages": offset,
+        "numbered_pages": body_total,
         "outline_entries": len(outline),
         "toc_entries_checked": toc_checked,
         "fonts": {n: ("daxil edilib" if e else "DAXİL EDİLMƏYİB") for n, e in sorted(all_fonts.items())},

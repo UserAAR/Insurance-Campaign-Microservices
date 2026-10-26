@@ -1,8 +1,9 @@
-// Backend Engineering Guide — PDF qurma skripti.
+// "Mikroservislərin Anatomiyası" (AAR) — PDF qurma skripti.
 //
 // Axın: chapters/*.md -> (mermaid -> SVG, etiketlər, mənbə istinadları) -> pandoc HTML ->
-//        bir HTML sənəd -> Chromium PDF (keçid 1, outline) -> səhifə nömrələri -> mündəricat ->
-//        Chromium PDF (keçid 2, son nəticə).
+//        bir HTML sənəd (titul, nəşr məlumatı, mündəricat, ön söz, fəsillər) -> Chromium PDF (keçid 1, outline)
+//        -> səhifə nömrələri -> mündəricat -> Chromium PDF (keçid 2) -> üz qabığı (cover.py + render_cover.mjs)
+//        -> assemble.py: üz qabığı birinci səhifəyə əlavə olunur, səhifə etiketləri və metadata yazılır.
 //
 // İstifadə:  MERMAID_JS=/path/to/mermaid.min.js node build/build.mjs
 // Tələblər:  pandoc (3.x), Node + playwright (Chromium), python3 + pypdf.
@@ -16,6 +17,7 @@ import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
+import { renderCover } from './render_cover.mjs';
 
 const BUILD_DIR = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(BUILD_DIR, '..');
@@ -141,6 +143,18 @@ function stripTags(s) { return s.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').
 function buildDocument(chaptersHtml, pageMap) {
   const tocItems = [];
   let body = '';
+  const collect = (html) => {
+    const re = /<h([12]) id="([^"]+)"[^>]*>([\s\S]*?)<\/h\1>/g;
+    let m;
+    while ((m = re.exec(html)) !== null) {
+      tocItems.push({ level: m[1] === '1' ? 1 : 2, id: m[2], title: stripTags(m[3]) });
+    }
+  };
+  for (const ch of BOOK.front || []) {
+    const html = chaptersHtml.get(ch);
+    body += `<section class="chapter front">${html}</section>\n`;
+    collect(html);
+  }
   for (const part of BOOK.parts) {
     const partId = `part-${part.key}`;
     tocItems.push({ level: 'part', id: partId, title: part.title });
@@ -165,12 +179,23 @@ function buildDocument(chaptersHtml, pageMap) {
   }).join('\n');
 
   const meta = BOOK.meta;
+  // Titul səhifəsi (üz qabığı ayrıca render olunur və assemble.py ilə əlavə edilir).
   const cover = `
-<section class="cover">
+<section class="cover title-page">
   <div class="kicker">${escapeHtml(meta.kicker)}</div>
   <h1 class="title">${escapeHtml(meta.title)}</h1>
   <div class="subtitle">${escapeHtml(meta.subtitle)}</div>
+  <div class="author">${escapeHtml(meta.author)}</div>
+  <div class="edition">${escapeHtml(meta.edition)}</div>
+</section>
+<section class="copyright-page">
+  <div class="cp-title">${escapeHtml(meta.title)}</div>
+  <p>${escapeHtml(meta.subtitle)}</p>
+  <p>Müəllif: <strong>${escapeHtml(meta.author)}</strong></p>
+  <p>${escapeHtml(meta.edition)}</p>
+  <p>© 2026 ${escapeHtml(meta.author)}. Bütün hüquqlar müəllifə məxsusdur.</p>
   <div class="meta">${meta.lines.map((l) => `<p>${escapeHtml(l)}</p>`).join('')}</div>
+  ${(meta.colophon || []).map((c) => `<p class="colophon">${escapeHtml(c)}</p>`).join('\n  ')}
 </section>`;
   const html = `<!doctype html>
 <html lang="az"><head><meta charset="utf-8">
@@ -252,7 +277,7 @@ async function main() {
   const browser = await chromium.launch();
   const mermaidJobs = [];
   const chaptersMd = new Map();
-  const files = BOOK.parts.flatMap((p) => p.chapters);
+  const files = [...(BOOK.front || []), ...BOOK.parts.flatMap((p) => p.chapters)];
   for (const f of files) {
     const md = fs.readFileSync(path.join(CHAPTER_DIR, f), 'utf8');
     const key = path.basename(f, '.md').slice(0, 2);
@@ -272,6 +297,7 @@ async function main() {
   const htmlPath = path.join(WORK_DIR, 'guide.html');
   const pass1Pdf = path.join(WORK_DIR, 'pass1.pdf');
   const finalPdf = path.join(OUT_DIR, BOOK.meta.pdfName);
+  const bodyPdf = path.join(WORK_DIR, 'body.pdf');
 
   let { html, tocItems } = buildDocument(chaptersHtml, null);
   fs.writeFileSync(htmlPath, html);
@@ -285,17 +311,21 @@ async function main() {
   ({ html } = buildDocument(chaptersHtml, pageMap));
   fs.writeFileSync(htmlPath, html);
   console.log('Keçid 2: son PDF yaradılır...');
-  await printPdf(browser, htmlPath, finalPdf);
-  const outline2 = readOutline(finalPdf);
+  await printPdf(browser, htmlPath, bodyPdf);
+  const outline2 = readOutline(bodyPdf);
   const pageMap2 = mapPages(tocItems, outline2);
   const drift = pageMap2.filter((p, i) => p !== pageMap[i]).length;
   if (drift > 0) {
     console.log(`Səhifə sürüşməsi: ${drift} başlıq — keçid 3 aparılır`);
     ({ html } = buildDocument(chaptersHtml, pageMap2));
     fs.writeFileSync(htmlPath, html);
-    await printPdf(browser, htmlPath, finalPdf);
+    await printPdf(browser, htmlPath, bodyPdf);
   }
+  console.log('Üz qabığı yaradılır...');
+  execFileSync('python3', [path.join(BUILD_DIR, 'cover.py')], { stdio: 'inherit' });
+  const { pdfPath: coverPdf } = await renderCover(browser, BOOK);
   await browser.close();
+  execFileSync('python3', [path.join(BUILD_DIR, 'assemble.py'), coverPdf, bodyPdf, finalPdf], { stdio: 'inherit' });
   fs.writeFileSync(path.join(WORK_DIR, 'toc-pages.json'), JSON.stringify(tocItems.map((t, i) => ({ ...t, page: pageMap2[i] })), null, 1));
   console.log(`Hazırdır: ${path.relative(ROOT, finalPdf)}`);
 }

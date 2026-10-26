@@ -140,7 +140,7 @@ opentelemetry:
 - [NƏTİCƏ] Compose-dakı `OTEL_TRACES_EXPORTER` və `OTEL_RESOURCE_ATTRIBUTES` dəyişənləri OpenTelemetry SDK
   autoconfigure konvensiyalarıdır; Spring Boot-un öz OpenTelemetry auto-configuration-u əsasən `management.*`
   xassələrindən istifadə edir. Yer tutanlarla xassələrə bağlanan dəyişənlər (`OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`,
-  `OTEL_SERVICE_NAME`) mütləq təsir edir; qalanlarının təsiri bu bələdçidə yoxlanmayıb.
+  `OTEL_SERVICE_NAME`) mütləq təsir edir; qalanlarının təsirini bu kitabda yoxlamamışam.
 
 ### Observation fərdiləşdirməsi
 

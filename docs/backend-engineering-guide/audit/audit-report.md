@@ -1,6 +1,6 @@
 # Audit hesabatı
 
-Bu hesabat bələdçinin necə yoxlandığını, hansı səhvlərin tapılıb düzəldildiyini və hansı məhdudiyyətlərin qaldığını
+Bu hesabat kitabın necə yoxlandığını, hansı səhvlərin tapılıb düzəldildiyini və hansı məhdudiyyətlərin qaldığını
 təsvir edir. Rəqəmlər son build-ə aiddir (bax: `audit/verify-refs.json`, `audit/semantic-refs.json`,
 `audit/pdf-audit.json`).
 
@@ -8,8 +8,9 @@ təsvir edir. Rəqəmlər son build-ə aiddir (bax: `audit/verify-refs.json`, `a
 
 | Göstərici | Dəyər |
 |---|---|
-| PDF | `output/Insurance-Campaign-Backend-Engineering-Guide-AZ.pdf`, 242 səhifə, ~16 MB |
-| Fəsillər | 26 (7 hissə), ~65 000 söz |
+| Kitab | *Mikroservislərin Anatomiyası* — AAR; `output/Mikroservislerin-Anatomiyasi-AAR.pdf`: üz qabığı + 245 nömrəli səhifə (cəmi 246), ~16 MB |
+| Üz qabığı | `cover/cover.svg` (vektor) və `output/Mikroservislerin-Anatomiyasi-AAR-cover.png` (2480 × 3508) |
+| Fəsillər | Ön söz + 26 fəsil (7 hissə), ~66 000 söz |
 | Mermaid diaqramları | 33 |
 | Mənbə ilə doğrulanan kod çıxarışları | 70 |
 | `fayl:sətir` istinadları | 459 (101 fərqli fayl) — avtomatik yoxlamada 0 xəta |
@@ -24,7 +25,7 @@ Yoxlama tapşırığın tələblər siyahısı ilə fəsillərin müqayisəsi il
 
 | Tələb | Harada | Vəziyyət |
 |---|---|---|
-| Öyrənmə bələdçisi, oxu yolları, etiket konvensiyası | Fəsil 1 | Var |
+| Ön söz, oxu yolları, etiket konvensiyası | Ön söz, fəsil 1 | Var |
 | Sistem icmalı, arxitektura, data sahibliyi, uğursuzluq təsiri | Fəsil 2 | Var |
 | Build, Maven, modul qrafı | Fəsil 3 | Var |
 | Hər texnologiya üçün dərin fəsil (konsepsiya → problem → nəzəriyyə → daxili mexanizm → repozitoriya → icra axını → konfiqurasiya → praktika → alternativlər → uğursuzluqlar → müsahibə → xülasə) | Fəsillər 4–19 | Var; Kafka (15 bölmə), Elasticsearch, gRPC, validasiya/istisnalar, security ayrıca və ətraflı |
@@ -84,8 +85,9 @@ yalançı siqnallardır.
 
 ## Audit C — PDF bütövlüyü
 
-**Avtomatik:** `build/audit_pdf.py` — mündəricatdakı 317 başlığın hər birinin göstərilən səhifədə mətn kimi tapılması,
-hər səhifədə `N / 242` altbilgisi, boş səhifələrin olmaması, şriftlərin PDF-ə daxil edilməsi (22 şrift; Type3 qlifləri
+**Avtomatik:** `build/audit_pdf.py` — mündəricatdakı 323 başlığın hər birinin göstərilən səhifədə mətn kimi tapılması,
+üz qabığından sonrakı hər səhifədə `N / 245` altbilgisi və PDF səhifə etiketlərinin (`Üz qabığı`, `1`, `2`, …) uyğunluğu,
+boş səhifələrin olmaması, şriftlərin PDF-ə daxil edilməsi (26 şrift; Type3 qlifləri
 daxili təsvir olunur), mətn qatında U+FFFD olmaması və Azərbaycan hərflərinin (ə, ğ, ı, İ, ö, ş, ç, ü) mövcudluğu.
 Nəticə `audit/pdf-audit.json`-dadır.
 
@@ -113,4 +115,4 @@ səhifələr PNG-yə render edilib baxıldı. Tapılıb düzəldilənlər:
 - Diaqramlar Mermaid avtomatik düzülüşü ilə render olunur; bəzi ardıcıllıq diaqramlarında özünə mesaj mətnləri dar
   sütunda bükülür.
 - PDF ~16 MB-dır (daxil edilmiş şriftlər və vektor diaqramlar).
-- Secret-lər (DB şifrələri, private key-lər, CI-dakı Sonar şifrəsi) bələdçidə təkrar edilmir; yalnız yerləri göstərilir.
+- Secret-lər (DB şifrələri, private key-lər, CI-dakı Sonar şifrəsi) kitabda təkrar edilmir; yalnız yerləri göstərilir.

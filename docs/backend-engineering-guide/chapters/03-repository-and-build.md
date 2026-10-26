@@ -131,7 +131,7 @@ Asılılıq ağacı bunu təsdiqləyir: campaign-service-də `grpc-core`, `grpc-
 | springdoc-openapi | 2.8.13 | `pom.xml:32` |
 | Testcontainers | 1.21.3 | `pom.xml:33` |
 
-Bu versiyalar bələdçidəki bütün framework davranışı izahlarının əsasıdır. Məsələn, Spring Boot 4-də auto-
+Bu versiyalar kitabdakı bütün framework davranışı izahlarının əsasıdır. Məsələn, Spring Boot 4-də auto-
 configuration modullara bölünüb, Jackson 3 standart JSON kitabxanası olub; Spring Kafka 4-də `JsonSerializer`
 köhnəlmiş (deprecated) elan edilib. Bunlar aşağıda və müvafiq fəsillərdə izah olunur.
 

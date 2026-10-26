@@ -314,7 +314,7 @@ Reproduksiya ssenarisi, təsir, təklif olunan düzəliş və test; ciddiliyə g
 
 **60. Yeni komandaya qoşulanda kod bazasını necə öyrənirsiniz?**
 Build və modul qrafı → giriş nöqtələri (controller, listener) → bir axını uçdan-uca izləmək → testlər → konfiqurasiya
-və yerləşdirmə → müşahidə alətləri. Bu bələdçinin quruluşu da belədir.
+və yerləşdirmə → müşahidə alətləri. Bu kitabın quruluşu da belədir.
 
 ## 24.5 Bu repozitoriya haqqında çətin suallar
 
@@ -326,7 +326,7 @@ və yerləşdirmə → müşahidə alətləri. Bu bələdçinin quruluşu da bel
 | "5 ms həddi niyə?" | Demo-da pipeline görünsün deyə; istehsalda mənasızdır və log həcmini partladır. |
 | "Kafka düşsə nə olar?" | campaign-service və log-service-in REST sorğuları `max.block.ms` səbəbindən 60 s-ə qədər gecikə bilər (yavaş sorğu filtri yalnız bu iki serviste aktivdir) — ən böyük əlçatanlıq riski. |
 | "Admin necə yaranır?" | Qeydiyyatda rol klientdən gəlir — bu, kritik boşluqdur; düzgün yol seed və ya admin endpoint-idir. |
-| "Bu kodu işə salıb yoxlamısınız?" | Bu bələdçi statik təhlilə əsaslanır (mühitdə Java 25 yox idi); runtime iddiaları [NƏTİCƏ] kimi işarələnib. Müsahibədə də fakt və fərziyyəni ayırın. |
+| "Bu kodu işə salıb yoxlamısınız?" | Bu kitab statik təhlilə əsaslanır (mühitdə Java 25 yox idi); runtime iddiaları [NƏTİCƏ] kimi işarələnib. Müsahibədə də fakt və fərziyyəni ayırın. |
 
 ## 24.6 Xülasə
 

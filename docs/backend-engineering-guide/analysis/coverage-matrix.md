@@ -75,7 +75,7 @@ Cəmi fayl: **178**, ən azı bir fəsildə istinad olunan: **178**.
 | `campaign-service/pom.xml` | campaign-service | Modul asılılıqları |  | Build | 03, 07, 16, 18 | Əhatə olunub | — | OK |
 | `campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/CampaignServiceApplication.java` | campaign-service | CampaignServiceApplication |  | Tətbiq kodu | 03, 04, 06, 15, 22 | Əhatə olunub | — | OK |
 | `campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/controller/CampaignController.java` | campaign-service | CampaignController |  | Tətbiq kodu | 02, 04, 05, 06, 08, 10, 20, 25 | Əhatə olunub | — | OK |
-| `campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/domain/Campaign.java` | campaign-service | Campaign |  | Tətbiq kodu | 01, 02, 03, 04, 05, 06, 11, 13, 17, 19, 20, 22, 25 | Əhatə olunub | — | OK |
+| `campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/domain/Campaign.java` | campaign-service | Campaign |  | Tətbiq kodu | 00, 01, 02, 03, 04, 05, 06, 11, 13, 17, 19, 20, 22, 25 | Əhatə olunub | — | OK |
 | `campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/domain/CampaignCategory.java` | campaign-service | CampaignCategory |  | Tətbiq kodu | 02, 06, 07, 08, 11 | Əhatə olunub | — | OK |
 | `campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/domain/CampaignStatus.java` | campaign-service | CampaignStatus |  | Tətbiq kodu | 02, 06, 07, 11, 13, 21, 22 | Əhatə olunub | — | OK |
 | `campaign-service/src/main/java/com/casestudy/insurancecampaign/campaign/dto/CampaignHistoryResponse.java` | campaign-service | CampaignHistoryResponse |  | Tətbiq kodu | 06, 13 | Əhatə olunub | — | — |
@@ -144,7 +144,7 @@ Cəmi fayl: **178**, ən azı bir fəsildə istinad olunan: **178**.
 | `docker-compose-local.yml` | (kök) | Yalnız infrastruktur (servislər IDE-dən) | postgres, redis, kafka, es, observability | Runtime | 01, 18 | Əhatə olunub | — | OK |
 | `docker-compose.yml` | (kök) | Tam stek (7 tətbiq + infrastruktur) | servislər, env, volume, network | Runtime | 01, 02, 04, 10, 11, 12, 13, 15, 16, 17, 18, 20, 21, 23, 25 | Əhatə olunub | Healthcheck şərtləri natamam (F29) | OK |
 | `grpc-contract/pom.xml` | grpc-contract | protoc + grpc-java generasiyası | protobuf-maven-plugin | Build | 03, 18 | Əhatə olunub | — | OK |
-| `grpc-contract/src/main/proto/campaign.proto` | grpc-contract | gRPC kontraktı | CampaignGrpcService, 6 mesaj | Servis kontraktı | 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 | Əhatə olunub | — | OK |
+| `grpc-contract/src/main/proto/campaign.proto` | grpc-contract | gRPC kontraktı | CampaignGrpcService, 6 mesaj | Servis kontraktı | 00, 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 | Əhatə olunub | — | OK |
 | `log-service/Dockerfile` | log-service | Çoxmərhələli image build | maven → amazoncorretto:25 | Deploy | 25 | Əhatə olunub | — | — |
 | `log-service/pom.xml` | log-service | Modul asılılıqları |  | Build | 25 | Əhatə olunub | — | — |
 | `log-service/src/main/java/com/casestudy/insurancecampaign/log/LogServiceApplication.java` | log-service | LogServiceApplication |  | Tətbiq kodu | 25 | Əhatə olunub | — | — |

@@ -137,7 +137,7 @@ və `NOT_FOUND` təkrar edilməməlidir, `UNKNOWN` heç bir məlumat vermir.
 Layihə **net.devh `grpc-server-spring-boot-starter` / `grpc-client-spring-boot-starter` 3.1.0.RELEASE** istifadə
 edir (`pom.xml:37`). Bu, icma (community) layihəsidir. Rəsmi alternativ **Spring gRPC** (`spring-grpc`) layihəsidir.
 [NAMƏLUM] net.devh 3.1.0-ın Spring Boot 4 ilə rəsmi uyğunluğu repozitoriyadan müəyyən edilə bilmir; layihə README-si
-işlədiyini göstərir (gRPC versiya uyğunsuzluğu bölməsi), lakin bu bələdçi runtime-da yoxlamayıb.
+işlədiyini göstərir (gRPC versiya uyğunsuzluğu bölməsi), lakin mən bunu runtime-da yoxlamamışam.
 
 Starter-in etdikləri [FAKT, kitabxana mənbəsi + layihə konfiqurasiyası]:
 

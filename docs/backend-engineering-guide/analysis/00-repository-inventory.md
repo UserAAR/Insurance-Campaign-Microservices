@@ -1,6 +1,6 @@
 # Repozitoriya inventarı
 
-> İş faylı. Bələdçinin yazılması üçün toplanmış faktiki məlumat. Mənbə: repozitoriyanın `1500818` commit-i
+> İş faylı. Kitabın yazılması üçün toplanmış faktiki məlumat. Mənbə: repozitoriyanın `1500818` commit-i
 > (`add complete insurance campaign microservices platform`, 2026-10-09). Bütün rəqəmlər faylların özündən
 > çıxarılıb.
 
@@ -145,7 +145,7 @@ POM həlli aparılıb; layihə Java 25 tələb etdiyi üçün kompilyasiya edilm
   (datasource + dashboard provisioning, `campaign-logs-traces.json`).
 - `.github/workflows/ci-cd.yml` (verify → sonar → docker matrix), `mark-done-on-merge.yml` (label avtomatlaşdırması).
 - `postman/Insurance Campaign Microservices.postman_collection.json`.
-- `screenshots/*.PNG` (16 ekran görüntüsü; bələdçidə istifadə olunmur).
+- `screenshots/*.PNG` (16 ekran görüntüsü; kitabda istifadə olunmur).
 - `README.md` (1 868 sətir).
 
 ## 5. README ilə kod arasında fərqlər (yoxlanılıb)
